@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MERCH — ii</title>
+<style>
+  
+
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background:#000;
+    color:#fff;
+    font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    overflow-x:hidden;
+    cursor:crosshair;
+    min-height:100vh;
+  }
+
+  
+  
+    25% {transform:translate(-2px,1px);}
+    50% {transform:translate(2px,-1px);}
+    75% {transform:translate(-1px,2px);}
+    100%{transform:translate(1px,-2px);}
+  }
+
+  
+  
+  
+  
+
+  
+  .reset-btn:hover { opacity:1; }
+
+   to{opacity:1;transform:translateY(0);} }
+
+  
+  
+   50%{opacity:0;} } to{transform:translateX(-50%);} }
+
+  /* SECTIONS */
+  #sections-container { width:100%; background:#000; }
+
+  .site-section {
+    border-bottom:1px solid #1a5c2a;
+    background:#000;
+    transition:opacity 0.2s;
+  }
+  .site-section.dragging {  }
+  .site-section.drag-over { border-top:2px solid #1a5c2a; }
+
+  .section-inner {
+    width:100%; max-width:700px; margin:0 auto; padding:0 40px;
+  }
+
+  .section-header {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:32px 0;
+    margin-bottom:0;
+    cursor:grab;
+    user-select:none;
+    width:100%;
+  }
+  .section-header:active { cursor:grabbing; }
+  .section-header-left { display:flex; justify-content:center; width:100%; }
+  
+  
+
+  .section-title {
+    font-size: 6.5vw;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: #fff;
+    text-align: center;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* VIDEO */
+  .video-wrap {
+    position:relative; width:100%; padding-bottom:56.25%;
+    background:#000; border:1px solid #1a5c2a; margin:0; overflow:hidden;
+    cursor:pointer;
+  }
+  .video-wrap iframe {
+    position:absolute; inset:0; width:100%; height:100%; border:none; background:#000;
+  }
+
+  /* THUMBNAIL OVERLAY */
+  .video-thumb {
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:#000;
+    transition:opacity 0.3s;
+  }
+  .video-thumb img {
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    opacity:1;
+    display:block;
+    font-size:0;
+    color:transparent;
+  }
+  /* play arrow — no circle, just the triangle centred */
+  .video-thumb .play-icon {
+    position:relative; z-index:2;
+    width:0; height:0;
+    border-top:22px solid transparent;
+    border-bottom:22px solid transparent;
+    border-left:38px solid #fff;
+    margin-left:6px; /* optical centre */
+    filter:drop-shadow(0 0 12px rgba(0,0,0,0.9));
+    transition:transform 0.2s;
+  }
+  .video-thumb:hover .play-icon { transform:scale(1.15); }
+  .video-thumb.hidden { opacity:0; pointer-events:none; }
+
+  /* PLATFORM LINKS */
+  .platform-links { display:flex; flex-wrap:wrap; gap:10px; padding:28px 0; justify-content:center; }
+  .platform-link {
+    display:inline-flex; align-items:center; gap:9px;
+    font-size:0.56rem; letter-spacing:0.22em; text-transform:uppercase;
+    text-decoration:none; color:#fff;
+    border:1px solid #1a5c2a; padding:10px 20px;
+    background:#000; transition:background 0.2s, color 0.2s;
+    white-space:nowrap;
+  }
+  .platform-link:hover { background:#fff; color:#000; }
+  .platform-link svg { width:13px; height:13px; fill:currentColor; flex-shrink:0; }
+  .platform-link:hover svg { fill:#000; }
+  .platform-link .yt-play { fill:#000; }
+  .platform-link:hover .yt-play { fill:#fff; }
+
+  /* MERCH */
+  .merch-carousel-wrap {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 24px;
+    border-left: 1px solid #1a5c2a;
+    border-right: 1px solid #1a5c2a;
+  }
+  .merch-carousel {
+    display: flex;
+    gap: 12px;
+    cursor: grab;
+    user-select: none;
+    will-change: transform;
+    padding: 0 2px;
+  }
+  .merch-carousel.grabbing { cursor: grabbing; }
+  .merch-slide {
+    flex: 0 0 calc(85%);
+    border: 1px solid #1a5c2a;
+    background: #000;
+    overflow: hidden;
+    scroll-snap-align: center;
+  }
+  .merch-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    margin-bottom: 32px;
+  }
+  .merch-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #1a5c2a;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .merch-dot.active {
+    background: #fff;
+    transform: scale(1.3);
+  }
+
+  .merch-img-wrap {
+    overflow:hidden; aspect-ratio:1/1;
+    background:#000; border-bottom:1px solid #1a5c2a;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .merch-img-inner {
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .merch-ph {
+    display:flex; flex-direction:column; align-items:center; gap:14px; padding:28px;
+  }
+  .merch-ph-label {
+    font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif; font-size:0.6rem;
+    letter-spacing:0.3em; color:#fff;  text-transform:uppercase;
+  }
+
+  .merch-info { padding:18px 20px 22px; }
+  .merch-tag { font-size:0.44rem; letter-spacing:0.3em; text-transform:uppercase; color:#fff;  margin-bottom:5px; }
+  .merch-name { font-size:1.1rem; font-weight:700; letter-spacing:0.04em; color:#fff; margin-bottom:5px; }
+  .merch-price { font-size:0.56rem; color:#fff;  letter-spacing:0.1em; }
+  .merch-btn {
+    display:block; width:100%; margin-top:12px; padding:10px 0;
+    background:#000; border:1px solid #1a5c2a; color:#fff;
+    font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif; font-size:0.48rem;
+    letter-spacing:0.3em; text-transform:uppercase; cursor:pointer;
+    transition:all 0.2s;
+  }
+  .merch-btn:hover { background:#fff; color:#000; }
+
+
+  /* EVENT POSTER */
+  .event-poster {
+    width: 100%;
+    max-width: 420px;
+    display: block;
+    margin: 0 auto 24px;
+    border: 1px solid #1a5c2a;
+  }
+
+  /* EVENTS */
+  .event-card {
+    border:1px solid #1a5c2a;
+    display:flex; flex-direction:column;
+    margin-top:28px;
+    margin-bottom:28px;
+  }
+  .event-card-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 24px;
+    border-bottom:1px solid #1a5c2a;
+  }
+  .event-venue {
+    font-size:0.55rem; letter-spacing:0.28em; text-transform:uppercase; color:#fff;
+  }
+  .event-date {
+    font-size:0.55rem; letter-spacing:0.28em; text-transform:uppercase; color:#fff;
+  }
+  .event-lineup {
+    display:grid; grid-template-columns:1fr 1px 1fr;
+    border-bottom:1px solid #1a5c2a;
+  }
+  .event-act {
+    padding:24px; display:flex; flex-direction:column; gap:8px;
+  }
+  .event-act:last-child { border-left: none; }
+  .event-lineup-divider {
+    background:#1a5c2a; width:1px;
+  }
+  .act-label {
+    font-size:0.42rem; letter-spacing:0.3em; text-transform:uppercase;
+    color:rgba(255,255,255,0.56);
+  }
+  .act-name {
+    font-size:0.75rem; letter-spacing:0.18em; text-transform:uppercase; color:#fff;
+  }
+  .act-time {
+    font-size:0.45rem; letter-spacing:0.25em; text-transform:uppercase;
+    color:rgba(255,255,255,0.69);
+  }
+  .event-card-footer {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+  }
+  .event-ticket-btn {
+    font-size:0.48rem; letter-spacing:0.28em; text-transform:uppercase;
+    background:#000; border:1px solid #1a5c2a; color:#fff;
+    padding:10px 20px; cursor:pointer; transition:all 0.2s;
+    text-decoration:none; display:inline-block;
+  }
+  .event-ticket-btn:hover { background:#fff; color:#000; }
+  .door-entry-label { }
+  @keyframes doorFlash {
+    0%   { color:rgba(255,255,255,0.63); text-shadow:none; }
+    50%  { color:rgba(255,60,60,1);   text-shadow:0 0 6px rgba(255,60,60,1), 0 0 16px rgba(255,60,60,0.8), 0 0 32px rgba(255,60,60,0.5), 0 0 60px rgba(255,40,40,0.25); }
+    100% { color:rgba(255,255,255,0.63); text-shadow:none; }
+  }
+  .door-entry-label.flash { animation: doorFlash 1.8s ease-in-out forwards; }
+  .event-price {
+    font-size:0.5rem; letter-spacing:0.25em; text-transform:uppercase;
+    color:rgba(255,255,255,0.63);
+  }
+  .events-tagline {
+    font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+    color:rgba(255,255,255,0.44); line-height:1.8;
+    text-align:center; padding:0 0 28px;
+  }
+
+  
+
+
+
+  /* TERMINAL BIO */
+  #terminal-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#000;
+    z-index:9997;
+    flex-direction:column;
+    padding:48px 44px 44px;
+    overflow-y:auto;
+    animation:termIn 0.2s ease;
+  }
+  @keyframes termIn {
+    from { opacity:0; }
+    to   { opacity:1; }
+  }
+  #terminal-overlay.open { display:flex; }
+  #terminal-close {
+    position:fixed;
+    top:20px; right:24px;
+    background:none; border:none;
+    color:#1a5c2a; font-size:1.2rem;
+    cursor:crosshair; line-height:1;
+    transition:color 0.2s;
+    z-index:2;
+    font-family:monospace;
+    letter-spacing:0.1em;
+  }
+  #terminal-close:hover { color:#00ff41; }
+  #terminal-label {
+    font-family:monospace;
+    font-size:0.55rem;
+    letter-spacing:0.3em;
+    color:#1a5c2a;
+    margin-bottom:28px;
+  }
+  #terminal-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    line-height: 1.85;
+    color: #00ff41;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-width: 760px;
+    text-shadow: 0 0 6px rgba(0,255,65,0.7), 0 0 18px rgba(0,255,65,0.35), 0 0 40px rgba(0,255,65,0.15);
+  }
+  .terminal-sig-logo {
+    height:1em;
+    width:auto;
+    filter: invert(1) brightness(2) sepia(1) hue-rotate(80deg) saturate(15);
+    vertical-align:middle;
+    opacity:0.9;
+    margin-left:4px;
+  }
+  .terminal-cursor {
+    display:inline-block;
+    width:0.65em;
+    height:1.1em;
+    background:#00ff41;
+    vertical-align:text-bottom;
+    margin-left:2px;
+    animation:blink 0.75s step-end infinite;
+  }
+  @keyframes blink {
+    0%,100% { opacity:1; }
+    50%      { opacity:0; }
+  }
+  @keyframes bioGlow {
+    0%,100% { color:#1a5c2a; text-shadow:0 0 6px rgba(26,92,42,0.6), 0 0 18px rgba(26,92,42,0.3); }
+    50%      { color:#4caf72; text-shadow:0 0 10px rgba(76,175,114,0.9), 0 0 28px rgba(76,175,114,0.5), 0 0 50px rgba(76,175,114,0.2); }
+  }
+  .bio-btn {
+    display:inline-block;
+    background:none;
+    border:none;
+    font-family:inherit;
+    font-size:0.44rem;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color:#1a5c2a;
+    cursor:crosshair;
+    padding:0;
+    animation:bioGlow 2.4s ease-in-out infinite;
+  }
+  .bio-btn:hover { animation:none; color:#fff; }
+
+  /* PRODUCT MODAL */
+  #product-modal-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    z-index:9998;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter:blur(4px);
+  }
+  #product-modal-overlay.open { display:flex; }
+  #product-modal {
+    background:#000;
+    border:1px solid #1a5c2a;
+    width:90%;
+    max-width:480px;
+    max-height:90vh;
+    overflow-y:auto;
+    position:relative;
+    animation:popupIn 0.3s ease;
+  }
+  .product-modal-img {
+    width:100%;
+    aspect-ratio:1/1;
+    border-bottom:1px solid #1a5c2a;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .product-modal-body {
+    padding:28px 28px 32px;
+  }
+  .product-modal-tag {
+    font-size:0.42rem;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.5);
+    margin-bottom:10px;
+  }
+  .product-modal-name {
+    font-size:1.4rem;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    color:#fff;
+    margin-bottom:8px;
+  }
+  .product-modal-price {
+    font-size:0.6rem;
+    letter-spacing:0.14em;
+    color:#fff;
+    margin-bottom:24px;
+  }
+  .product-modal-sizes-label {
+    font-size:0.42rem;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.5);
+    margin-bottom:10px;
+  }
+  .product-modal-sizes {
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:24px;
+  }
+  .size-btn {
+    background:#000;
+    border:1px solid #1a5c2a;
+    color:#fff;
+    font-family:inherit;
+    font-size:0.5rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    padding:9px 14px;
+    cursor:crosshair;
+    transition:background 0.2s, color 0.2s;
+  }
+  .size-btn:hover,
+  .size-btn.selected { background:#1a5c2a; color:#fff; }
+  .product-modal-desc {
+    font-size:0.6rem;
+    letter-spacing:0.08em;
+    color:rgba(255,255,255,0.6);
+    line-height:1.8;
+    margin-bottom:24px;
+    text-transform:none;
+  }
+  .product-modal-btn {
+    display:block;
+    width:100%;
+    padding:14px;
+    background:#000;
+    border:1px solid #1a5c2a;
+    color:#fff;
+    font-family:inherit;
+    font-size:0.5rem;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    cursor:crosshair;
+    transition:background 0.2s, color 0.2s;
+  }
+  .product-modal-btn:hover { background:#fff; color:#000; }
+  .product-modal-close {
+    position:absolute;
+    top:14px; right:18px;
+    background:none; border:none;
+    color:#555; font-size:1.2rem;
+    cursor:crosshair;
+    line-height:1;
+    transition:color 0.2s;
+    z-index:2;
+  }
+  .product-modal-close:hover { color:#fff; }
+
+  /* FOOTER */
+  footer {
+    padding:28px 44px;
+    display:flex; justify-content:center; align-items:center;
+  }
+  .footer-links { display:flex; gap:10px; list-style:none; flex-wrap:wrap; justify-content:center; }
+  .footer-links a {
+    font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase;
+    color:#fff;  text-decoration:none; transition:opacity 0.2s;
+  }
+  .footer-links a:hover { opacity:1; }
+  .footer-copy {
+    font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif; font-size:0.66rem;
+    letter-spacing:0.2em; color:#fff;
+  }
+  .footer-contact {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:24px;
+    padding:0 44px 28px;
+    flex-wrap:wrap;
+  }
+  .footer-contact a {
+    font-size:0.66rem;
+    letter-spacing:0.2em;
+    color:#fff;
+    text-decoration:none;
+    transition:opacity 0.2s;
+  }
+  .footer-contact a:hover { opacity:0.65; }
+  .footer-credit {
+    text-align:center;
+    padding:6px 44px 20px;
+    font-size:0.4rem;
+    letter-spacing:0.2em;
+    color:rgba(255,255,255,0.2);
+    text-transform:uppercase;
+  }
+  .footer-contact-label {
+    font-size:0.66rem;
+    letter-spacing:0.2em;
+    color:#fff;
+  }
+
+  /* SIDE NAV */
+  .ii-nav-smiley-btn {
+    position:absolute;
+    top:50%; left:20px;
+    transform:translateY(-50%);
+    z-index:10;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    line-height:0;
+  }
+  .ii-nav-smiley-btn img {
+    width:42px;
+    height:42px;
+    object-fit:contain;
+    display:block;
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.25));
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  .ii-nav-smiley-btn:hover img {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.5)) drop-shadow(0 0 18px rgba(255,255,255,0.2));
+  }
+  .ii-nav-smiley-btn:active img {
+    transform: scale(0.95);
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.3));
+  }
+  #ii-sidenav-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    z-index:9000;
+    backdrop-filter:blur(2px);
+  }
+  #ii-sidenav-overlay.open { display:block; }
+  #ii-sidenav {
+    position:fixed;
+    top:0; left:0;
+    width:280px;
+    height:100%;
+    background:#000;
+    border-right:1px solid #1a5c2a;
+    z-index:9001;
+    transform:translateX(-100%);
+    transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    display:flex;
+    flex-direction:column;
+    padding:40px 0 32px;
+  }
+  #ii-sidenav.open { transform:translateX(0); }
+  .ii-sidenav-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px 36px;
+    border-bottom:1px solid #1a5c2a;
+    margin-bottom:12px;
+  }
+  .ii-sidenav-logo {
+    width:42px;
+    height:42px;
+    object-fit:contain;
+  }
+  .ii-sidenav-close {
+    background:none;
+    border:none;
+    color:#555;
+    font-size:1.1rem;
+    cursor:crosshair;
+    transition:color 0.2s;
+    line-height:1;
+    padding:0;
+  }
+  .ii-sidenav-close:hover { color:#fff; }
+  .ii-sidenav-list {
+    list-style:none;
+    padding:0;
+    margin:0;
+    flex:1;
+  }
+  .ii-sidenav-list li {
+    border-bottom:none;
+  }
+  .ii-sidenav-btn {
+    width:100%;
+    background:none;
+    border:none;
+    text-align:left;
+    padding:14px 28px;
+    font-family:inherit;
+    font-size:0.5rem;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.69);
+    cursor:crosshair;
+    transition:color 0.2s, background 0.2s;
+    text-decoration:none;
+    display:block;
+  }
+  .ii-sidenav-btn:hover,
+  .ii-sidenav-btn.active {
+    color:#fff;
+    background:rgba(26,92,42,0.15);
+  }
+  .past-events-section {
+    display:none;
+    padding:32px 0 40px;
+    border-top:1px solid #1a5c2a;
+    margin-top:32px;
+  }
+  .past-events-section.visible { display:block; }
+  .past-events-title {
+    font-size:0.44rem;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.5);
+    text-align:center;
+    margin-bottom:32px;
+  }
+  .past-events-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    max-width:500px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  .ii-past-poster {
+    width:100%;
+    aspect-ratio:4/5;
+    object-fit:cover;
+    border:1px solid #1a5c2a;
+    cursor:crosshair;
+    transition:opacity 0.2s;
+  }
+  .ii-past-poster:hover { opacity:0.8; }
+  /* Lightbox */
+  #ii-lightbox {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.92);
+    z-index:99998;
+    align-items:center;
+    justify-content:center;
+  }
+  #ii-lightbox.open { display:flex; }
+  #ii-lightbox img {
+    max-width:90vw;
+    max-height:90vh;
+    object-fit:contain;
+    border:1px solid #1a5c2a;
+  }
+  #ii-lightbox-close {
+    position:absolute;
+    top:20px; right:24px;
+    background:none; border:none;
+    color:#fff; font-size:1.4rem;
+    cursor:crosshair;
+  }
+
+  /* LANDING PAGE */
+  #ii-landing {
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    background:#000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    transition:opacity 0.9s ease;
+  }
+  #ii-landing { touch-action: none; }
+  #ii-landing.fade-out {
+    opacity:0;
+    pointer-events:none;
+  }
+  #ii-landing video {
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:1;
+  }
+  #ii-fade-in {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    background: #000;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  #ii-fade-in.gone { opacity: 0; }
+  #ii-landing-ui {
+    position:relative;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    margin-top:-140px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 1.4s ease;
+  }
+  #ii-landing-ui.visible {
+    opacity:1;
+    pointer-events:auto;
+  }
+  .ii-landing-logo {
+    position:relative;
+    z-index:2;
+    margin-bottom:-142px;
+    animation: smileyPulse 3.5s ease-in-out infinite;
+  }
+  @keyframes smileyPulse {
+    0%   { transform:scale(1);     filter: drop-shadow(0 0 20px rgba(120,220,140,0.5)) drop-shadow(0 0 60px rgba(120,220,140,0.25)) drop-shadow(0 0 100px rgba(120,220,140,0.12)); }
+    50%  { transform:scale(1.015); filter: drop-shadow(0 0 28px rgba(120,220,140,0.7)) drop-shadow(0 0 80px rgba(120,220,140,0.35)) drop-shadow(0 0 130px rgba(120,220,140,0.18)); }
+    100% { transform:scale(1);     filter: drop-shadow(0 0 20px rgba(120,220,140,0.5)) drop-shadow(0 0 60px rgba(120,220,140,0.25)) drop-shadow(0 0 100px rgba(120,220,140,0.12)); }
+  }
+  .ii-landing-logo img {
+    width:544px;
+    height:auto;
+    display:block;
+  }
+  .ii-enter-btn {
+    position:relative;
+    z-index:2;
+    background:none;
+    border:none;
+    font-family:inherit;
+    font-size:0.62rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:#2e8b4a;
+    cursor:crosshair;
+    padding:0 2px;
+    line-height:1;
+    text-shadow: 0 0 8px rgba(120,220,140,0.9), 0 0 30px rgba(120,220,140,0.6), 0 0 70px rgba(120,220,140,0.35), 0 0 120px rgba(120,220,140,0.15);
+    filter: drop-shadow(0 0 20px rgba(120,220,140,0.5)) drop-shadow(0 0 60px rgba(120,220,140,0.25));
+    transition:color 0.3s ease, text-shadow 0.3s ease, filter 0.3s ease;
+  }
+  .ii-enter-btn:hover,
+  .ii-enter-btn.hovered {
+    color:#fff;
+    text-shadow: 0 0 8px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.5);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.4));
+  }
+
+  /* EMAIL POPUP */
+  .ii-popup-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter:blur(4px);
+  }
+  .ii-popup-overlay.active { display:flex; }
+  .ii-popup {
+    background:#000;
+    border:1px solid #1a5c2a;
+    padding:44px 40px 36px;
+    max-width:400px;
+    width:90%;
+    position:relative;
+    animation:popupIn 0.35s ease;
+  }
+  @keyframes popupIn {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .ii-popup-close {
+    position:absolute;
+    top:14px; right:18px;
+    background:none; border:none;
+    color:#555; font-size:1.2rem;
+    cursor:crosshair;
+    line-height:1;
+    transition:color 0.2s;
+  }
+  .ii-popup-close:hover { color:#fff; }
+  .ii-popup-tag {
+    font-size:0.45rem;
+    letter-spacing:0.28em;
+    text-transform:none;
+    color:#fff;
+    margin-bottom:12px;
+  }
+  .ii-popup h2 {
+    font-size:1.5rem;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    color:#fff;
+    margin-bottom:8px;
+    line-height:1.2;
+  }
+  .ii-popup p {
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    color:#fff;
+    text-transform:none;
+    margin-bottom:28px;
+  }
+  .ii-popup-form {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .ii-popup-input {
+    background:#000;
+    border:1px solid #1a5c2a;
+    color:#fff;
+    font-size:0.8rem;
+    letter-spacing:0.08em;
+    padding:12px 16px;
+    outline:none;
+    width:100%;
+    font-family:inherit;
+    transition:border-color 0.2s;
+  }
+  .ii-popup-input::placeholder { color:#444; }
+  .ii-popup-input:focus { border-color:#4caf72; }
+  .ii-popup-submit {
+    background:#1a5c2a;
+    color:#fff;
+    border:none;
+    padding:13px 16px;
+    font-size:0.55rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    cursor:crosshair;
+    font-family:inherit;
+    transition:background 0.2s;
+    width:100%;
+  }
+  .ii-popup-submit:hover { background:#256b38; }
+  .ii-popup-confirm {
+    display:none;
+    text-align:center;
+    padding:8px 0 4px;
+  }
+  .ii-popup-confirm p {
+    font-size:0.65rem;
+    letter-spacing:0.18em;
+    color:#4caf72;
+    text-transform:uppercase;
+    margin-bottom:0;
+  }
+
+  @media (max-width:900px) {
+
+    nav,.section-inner,
+    .merch-grid { grid-template-columns:1fr; }
+    .merch-slide-item { border-right:none; border-bottom:1px solid #1a5c2a; }
+    .merch-item:last-child { border-bottom:none; }
+
+    /* header video zoomed on mobile - hide middle */
+    .ii-header { height: 180px; overflow: hidden; }
+    .ii-header-video { width: 100%; height: auto; min-height: 400%; object-fit: unset; transform: scale(2.5); transform-origin: top center; }
+    .ii-header-highlight-canvas { height: 100%; }
+
+    /* footer fix */
+    footer { padding:20px 16px; justify-content:center; }
+    .footer-links { flex-wrap:wrap; justify-content:center; gap:12px; padding: 0 16px; }
+    .footer-contact { flex-direction:column; align-items:center; gap:8px; padding:0 16px 20px; text-align:center; }
+    .footer-copy { display:block; }
+
+    .section-title {
+      font-size: 6.5vw;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: #fff;
+      text-align: center;
+      display: block;
+      width: 100%;
+      overflow: hidden;
+    }
+    .platform-links { flex-direction:column; }
+  }
+
+
+  /* SECTION LOGOS */
+  .section-logo {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* HEADER */
+  .ii-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #000;
+    width: 100%;
+    height: 124px;
+    overflow: hidden;
+    border-bottom: 1px solid #1a5c2a;
+  }
+  .ii-header-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    min-width: 100%;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
+    filter: brightness(0.4) saturate(0.7) hue-rotate(20deg);
+    object-fit: cover;
+    object-position: top;
+  }
+  .ii-header-video::-webkit-media-controls { display: none !important; }
+  .ii-header-video::-webkit-media-controls-enclosure { display: none !important; }
+  .ii-header-video::-webkit-media-controls-overlay-play-button { display: none !important; }
+  .ii-header-highlight-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: soft-light;
+  }
+  .ii-matrix-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: block;
+  }
+  .ii-logo-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .ii-logo-overlay img {
+    transition: transform 0.2s ease, filter 0.2s ease;
+    filter: drop-shadow(0 0 0px rgba(255,255,255,0));
+  }
+  .ii-logo-overlay:hover img {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.5)) drop-shadow(0 0 18px rgba(255,255,255,0.2));
+  }
+  .ii-logo-overlay:active img {
+    transform: scale(0.95);
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.3));
+  }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline><source src="/HEADER FOR SUB PAGES-effectapp.mp4" type="video/mp4"></video><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
+<button class="ii-nav-smiley-btn" id="ii-nav-smiley-btn" aria-label="Open menu"><img id="ii-nav-smiley-img" src="assets/asset-9cb167bc.png" alt="SMiiLEY" draggable="false"></button>
+<div class="ii-logo-overlay"><a href="/ii-brand.html" style="display:block;text-align:center;"><img src="assets/asset-bddafd0c.png" alt="" style="height:38px;width:auto;display:block;margin:0 auto;"></a></div></div>
+
+
+<div id="sections-container">
+
+  <!-- CLOTHING -->
+  
+
+  <!-- CAN'T CONTAIIN -->
+<div class="site-section" id="section-clothing" data-id="clothing">
+    <div class="section-inner" style="padding-top:32px;">
+      
+      <div class="merch-carousel-wrap">
+  <div class="merch-carousel" id="merch-carousel">
+    <div class="merch-slide" data-product="tee">
+      <div class="merch-img-wrap"><div class="merch-img-inner">
+        <div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>
+      </div></div>
+      <div class="merch-info">
+        <h3 class="merch-name">ESR Bleached Logo Tee</h3>
+        <p class="merch-price">€35.00 — Black / Oversized</p>
+        <button class="merch-btn merch-view-btn">View Product</button>
+      </div>
+    </div>
+    <div class="merch-slide" data-product="cap">
+      <div class="merch-img-wrap"><div class="merch-img-inner">
+        <div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>
+      </div></div>
+      <div class="merch-info">
+        <h3 class="merch-name">ii Cap</h3>
+        <p class="merch-price">TBA</p>
+        <button class="merch-btn merch-view-btn">View Product</button>
+      </div>
+    </div>
+    <div class="merch-slide" data-product="ring">
+      <div class="merch-img-wrap"><div class="merch-img-inner">
+        <div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>
+      </div></div>
+      <div class="merch-info">
+        <h3 class="merch-name">ii Ring</h3>
+        <p class="merch-price">TBA</p>
+        <button class="merch-btn merch-view-btn">View Product</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+  <div class="merch-dots">
+    <span class="merch-dot active" onclick="goToSlide(0)"></span>
+    <span class="merch-dot" onclick="goToSlide(1)"></span>
+    <span class="merch-dot" onclick="goToSlide(2)"></span>
+  </div>
+  <div style="text-align:center;padding:0 0 28px;">
+    <button class="bio-btn" data-bio="merch">[about]</button>
+  </div>
+    </div>
+  </div>
+<footer>
+  <ul class="footer-links">
+    <li><a href="https://www.instagram.com/ii.galway/" target="_blank" rel="noopener">Instagram</a></li>
+    <li><a href="https://on.soundcloud.com/XkXN9E7jfLreEhMwX6" target="_blank" rel="noopener">SoundCloud</a></li>
+    <li><a href="https://eyessetrecs.bandcamp.com/track/andrew-mccarthy-briing-the-beat-back" target="_blank" rel="noopener">Bandcamp</a></li>
+    <li><a href="https://www.youtube.com/@ii.galway" target="_blank" rel="noopener">YouTube</a></li>
+  </ul>
+</footer>
+<div class="footer-contact">
+  <span class="footer-contact-label">Contact:<a href="mailto:ii.collectivegalway@gmail.com">ii.collectivegalway@gmail.com</a></span>
+  <span class="footer-copy">© ii 2026</span>
+</div>
+<div class="footer-credit">Created by Darragh Mannion</div>
+
+<!-- TERMINAL BIO MODAL -->
+<div id="terminal-overlay">
+  <button id="terminal-close">[close]</button>
+  <div id="terminal-label"></div>
+  <div id="terminal-text"></div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div id="product-modal-overlay">
+  <div id="product-modal">
+    <button class="product-modal-close" id="product-modal-close">✕</button>
+    <div class="product-modal-img" id="product-modal-img">
+      <div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>
+    </div>
+    <div class="product-modal-body">
+      <p class="product-modal-tag" id="product-modal-tag">ii — Merch</p>
+      <h2 class="product-modal-name" id="product-modal-name"></h2>
+      <p class="product-modal-price" id="product-modal-price"></p>
+      <p class="product-modal-sizes-label">Select Size</p>
+      <div class="product-modal-sizes" id="product-modal-sizes"></div>
+      <p class="product-modal-desc" id="product-modal-desc"></p>
+      <button class="product-modal-btn" id="product-modal-cart">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// Video config
+const videoConfig = {
+  cc:    { list:'PLaKu6TO_lixCNK6TTCOUJrVZ9uBfB1f97',  wrap:'cc-video-wrap',    thumb:'cc-thumb'    },
+  recs:  { list:'PLaKu6TO_lixDlu8gm6_CZK-Cd9D8ZkdIH', wrap:'recs-video-wrap',  thumb:'recs-thumb'  },
+};
+
+// Load video into iframe on click
+function loadVideo(key) {
+  const cfg   = videoConfig[key];
+  const wrap  = document.getElementById(cfg.wrap);
+  const thumb = document.getElementById(cfg.thumb);
+  wrap.onclick = null;
+  const iframe = document.createElement('iframe');
+  const src = cfg.firstId
+    ? `https://www.youtube.com/embed/${cfg.firstId}?autoplay=1&rel=0&modestbranding=1&color=white`
+    : `https://www.youtube.com/embed/videoseries?list=${cfg.list}&index=0&autoplay=1&rel=0&modestbranding=1&color=white`;
+  iframe.src = src;
+  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  iframe.allowFullscreen = true;
+  iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+  wrap.appendChild(iframe);
+  thumb.classList.add('hidden');
+}
+
+// Check if a YouTube thumbnail is real (not the grey 120x90 placeholder)
+function thumbIsReal(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(img.naturalWidth > 120 && img.naturalHeight > 90);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+}
+
+// Fetch playlist video IDs via allorigins proxy (no API key needed)
+async function getPlaylistIds(playlistId) {
+  try {
+    const url   = encodeURIComponent('https://www.youtube.com/playlist?list=' + playlistId);
+    const res   = await fetch('https://api.allorigins.win/get?url=' + url);
+    const data  = await res.json();
+    const matches = [...data.contents.matchAll(/"videoId":"([a-zA-Z0-9_-]{11})"/g)];
+    return [...new Set(matches.map(m => m[1]))];
+  } catch(e) {
+    return [];
+  }
+}
+
+// Walk playlist and set first public video thumbnail
+async function initVideo(key) {
+  const ids = await getPlaylistIds(videoConfig[key].list);
+  for (const id of ids) {
+    const maxres = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+    const hq     = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+    const real   = await thumbIsReal(maxres);
+    const realHq = real || await thumbIsReal(hq);
+    if (realHq) {
+      const thumbEl = document.getElementById(videoConfig[key].thumb);
+      if (thumbEl) {
+        const img = thumbEl.querySelector('img');
+        if (img) img.src = real ? maxres : hq;
+      }
+      videoConfig[key].firstId = id;
+      break;
+    }
+  }
+}
+
+
+// ── MERCH CAROUSEL (infinite loop) ──
+(function() {
+  const carousel = document.getElementById('merch-carousel');
+  if (!carousel) return;
+
+  const dots = document.querySelectorAll('.merch-dot');
+
+  // Clone slides for infinite loop: clone all slides and prepend + append
+  const origSlides = Array.from(carousel.querySelectorAll('.merch-slide'));
+  const total = origSlides.length;
+
+  // Prepend clones of last N and append clones of first N
+  const clonesBefore = origSlides.map(s => s.cloneNode(true));
+  const clonesAfter  = origSlides.map(s => s.cloneNode(true));
+  clonesBefore.reverse().forEach(c => carousel.prepend(c));
+  clonesAfter.forEach(c => carousel.append(c));
+
+  // Now carousel has: [clones of all] [originals] [clones of all]
+  // Real slides start at index `total`
+  let current = total; // start on first real slide
+  let currentOffset = 0;
+  let startX = 0;
+  let startOffset = 0;
+  let isDragging = false;
+  let isTransitioning = false;
+
+  function allSlides() {
+    return carousel.querySelectorAll('.merch-slide');
+  }
+
+  function getSlideWidth() {
+    const s = allSlides()[0];
+    return s.offsetWidth + 12; // width + gap
+  }
+
+  function calcOffset(idx) {
+    const sw = getSlideWidth();
+    const containerW = carousel.parentElement.offsetWidth;
+    const slideW = allSlides()[0].offsetWidth;
+    const leftPad = (containerW - slideW) / 2;
+    return leftPad - idx * sw;
+  }
+
+  function updateDots() {
+    // real index 0..total-1
+    const realIdx = ((current - total) % total + total) % total;
+    dots.forEach((d, i) => d.classList.toggle('active', i === realIdx));
+  }
+
+  function setOffset(offset, animate) {
+    currentOffset = offset;
+    carousel.style.transition = animate ? 'transform 0.32s cubic-bezier(0.25,1,0.5,1)' : 'none';
+    carousel.style.transform = `translateX(${offset}px)`;
+  }
+
+  function jumpIfNeeded() {
+    const slides = allSlides();
+    const len = slides.length; // total * 3
+    // If we've gone into the prepended clones, jump to real equivalents
+    if (current < total) {
+      current += total;
+      setOffset(calcOffset(current), false);
+    }
+    // If we've gone into the appended clones, jump back
+    if (current >= total * 2) {
+      current -= total;
+      setOffset(calcOffset(current), false);
+    }
+    updateDots();
+  }
+
+  function goToSlide(idx, animate = true) {
+    current = idx;
+    setOffset(calcOffset(current), animate);
+    updateDots();
+  }
+
+  window.goToSlide = function(realIdx) {
+    goToSlide(total + realIdx);
+  };
+
+  // After transition ends, check if we need to silently jump
+  carousel.addEventListener('transitionend', () => {
+    isTransitioning = false;
+    jumpIfNeeded();
+  });
+
+  // Touch events
+  carousel.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startOffset = currentOffset;
+    isDragging = true;
+    carousel.style.transition = 'none';
+  }, { passive: true });
+
+  carousel.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    setOffset(startOffset + dx, false);
+  }, { passive: true });
+
+  carousel.addEventListener('touchend', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    const sw = getSlideWidth();
+    if (dx < -(sw * 0.3))      goToSlide(current + 1);
+    else if (dx > (sw * 0.3))  goToSlide(current - 1);
+    else                        goToSlide(current);
+  });
+
+  // Mouse events
+  carousel.addEventListener('mousedown', e => {
+    startX = e.clientX;
+    startOffset = currentOffset;
+    isDragging = true;
+    carousel.classList.add('grabbing');
+    carousel.style.transition = 'none';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    setOffset(startOffset + dx, false);
+  });
+  window.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    carousel.classList.remove('grabbing');
+    const dx = e.clientX - startX;
+    const sw = getSlideWidth();
+    if (dx < -(sw * 0.3))      goToSlide(current + 1);
+    else if (dx > (sw * 0.3))  goToSlide(current - 1);
+    else                        goToSlide(current);
+  });
+
+  // Init
+  window.addEventListener('load', () => goToSlide(total, false));
+  window.addEventListener('resize', () => goToSlide(current, false));
+})();
+
+// no videos on merch page
+
+
+// ── TERMINAL BIO ──
+(function(){
+  var bios = {
+    cc: {
+      label: '> CAN\'T CONTAiiN // MIX SERIES',
+      text: `CANT CONTAiiN is a recorded mix series shot inside a pitch-black shipping container using night vision. Artists perform alone, isolated in a controlled, high-pressure environment where visibility, comfort, and certainty are removed from the process.
+
+Each guest receives a mystery track from the previous artist that must be worked into their set at some point. Failure to include it breaks the chain — removing their ability to select the next track and disrupting the collaborative loop that connects every recording.
+
+Sets typically run 45–60 minutes due to extreme heat and humidity inside the container, which becomes physically limiting over time. This constraint, combined with darkness, isolation, and an unknown musical element, forces focus, adaptability, and instinct-driven performance.
+
+— ii`
+    },
+    recs: {
+      label: '> EYES SET RECS // DIGITAL LABEL',
+      text: `Eyes Set Recs is a digital label emerging from the Galway club and rave ecosystem, focused on raw, high-impact club music rooted in Irish underground culture.
+
+The label's sound sits between techno, breaks, and nostalgic rave influences. Tracks are driven by heavy percussion, distorted low-end, broken rhythms, and atmospheric textures.
+
+Releases are designed to pay homage to DIY rave culture, reflecting the environment in which the identity of ii was formed.
+
+— ii`
+    },
+    events: {
+      label: '> EYES SET EVENTS // CLUB NIGHTS',
+      text: `Eyes Set Events is a club night series focused on Irish talent and the wider network of artists shaping the sound of contemporary rave culture and Irish electronic music.
+
+The nights move across techno, breaks, bass-driven club music, and high-energy electronic forms.
+
+The series exists to platform underrated Irish artists, placing them alongside influences and peers from the wider underground scene. With many emerging artists caught between limited Irish club opportunities and headline-focused programming, it aims to provide space for developing homegrown talent to perform, grow, and be heard in a real club context.
+
+— ii`
+    },
+    merch: {
+      label: '> ii MERCH // CLOTHING',
+      text: `As high quality as damaged goods can get.
+
+All profit directly funds ii projects.
+
+Select pieces may involve experimental DIY bleaching processes. These are intentionally unpredictable and should be handled with care during production — using appropriate protective measures and common-sense precautions when working with chemicals.
+
+Garments should be thoroughly washed after processing and before wear.
+
+— ii`
+    }
+  };
+
+  var overlay  = document.getElementById('terminal-overlay');
+  var closeBtn = document.getElementById('terminal-close');
+  var labelEl  = document.getElementById('terminal-label');
+  var textEl   = document.getElementById('terminal-text');
+  var typingTimer = null;
+  var cachedLogoSrc = null;
+  window.addEventListener('load', function(){
+    var logoEl = document.querySelector('.ii-logo-overlay img');
+    if (logoEl) cachedLogoSrc = logoEl.src;
+  });
+
+  function stopTyping() {
+    if (typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
+  }
+
+  function typeText(str, el) {
+    stopTyping();
+    el.innerHTML = '';
+    var cursor = document.createElement('span');
+    cursor.className = 'terminal-cursor';
+    el.appendChild(cursor);
+    var i = 0;
+    function next() {
+      if (i >= str.length) return;
+      var ch = str[i++];
+      el.insertBefore(document.createTextNode(ch), cursor);
+      var delay = ch === '\n' ? 60 : (Math.random() * 25 + 10);
+      typingTimer = setTimeout(next, delay);
+    }
+    next();
+  }
+
+  function openBio(key) {
+    var bio = bios[key];
+    if (!bio) return;
+    labelEl.textContent = bio.label;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    typeText(bio.text, textEl);
+  }
+
+  function closeBio() {
+    stopTyping();
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeBio);
+
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.bio-btn');
+    if (btn) openBio(btn.dataset.bio);
+  });
+})();
+
+// Product data
+const products = {
+  tee: {
+    name: 'ESR Bleached Logo Tee',
+    tag: '',
+    price: '€35.00',
+    desc: 'Oversized heavyweight tee. Bleached ESR logo print on front. 100% cotton. Washed black.',
+    sizes: ['S','M','L','XL'],
+  }
+};
+
+// Product modal
+(function(){
+  const overlay = document.getElementById('product-modal-overlay');
+  const closeBtn = document.getElementById('product-modal-close');
+
+  function openProduct(key) {
+    const p = products[key];
+    if (!p) return;
+    document.getElementById('product-modal-name').textContent = p.name;
+    var tagEl = document.getElementById('product-modal-tag');
+    tagEl.textContent = p.tag;
+    tagEl.style.display = p.tag ? '' : 'none';
+    document.getElementById('product-modal-price').textContent = p.price;
+    document.getElementById('product-modal-desc').textContent = p.desc;
+
+    // Sizes
+    const sizesEl = document.getElementById('product-modal-sizes');
+    sizesEl.innerHTML = '';
+    p.sizes.forEach(function(s) {
+      var btn = document.createElement('button');
+      btn.className = 'size-btn';
+      btn.textContent = s;
+      btn.addEventListener('click', function(){
+        sizesEl.querySelectorAll('.size-btn').forEach(function(b){ b.classList.remove('selected'); });
+        btn.classList.add('selected');
+      });
+      sizesEl.appendChild(btn);
+    });
+
+    // Copy image from slide if available
+    var slide = document.querySelector('.merch-slide[data-product="' + key + '"]');
+    var modalImg = document.getElementById('product-modal-img');
+    if (slide) {
+      var img = slide.querySelector('img');
+      modalImg.innerHTML = '';
+      if (img) {
+        var clone = img.cloneNode();
+        clone.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+        modalImg.appendChild(clone);
+      } else {
+        modalImg.innerHTML = '<div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>';
+      }
+    }
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
+
+  // Open on View Product click
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.merch-view-btn');
+    if (btn) {
+      var slide = btn.closest('.merch-slide');
+      var key = slide ? slide.dataset.product : null;
+      if (key) openProduct(key);
+    }
+  });
+})();
+</script>
+
+
+
+
+
+<script>
+(function(){
+  var canvas = document.getElementById('ii-matrix-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+
+  var FS = 26;           // cell size — logo drawn FS×FS per drop
+  var drops, spds, numCols;
+  var headLogo = null;   // bright variant (head of drop)
+  var dimLogo  = null;   // mid-green variant (second step)
+
+  function buildVariant(logoEl, tint, sz) {
+    var c = document.createElement('canvas');
+    c.width = sz; c.height = sz;
+    var cx = c.getContext('2d');
+    cx.drawImage(logoEl, 0, 0, sz, sz);
+    // Tint: paint solid colour only where logo pixels exist
+    cx.globalCompositeOperation = 'source-atop';
+    cx.fillStyle = tint;
+    cx.fillRect(0, 0, sz, sz);
+    return c;
+  }
+
+  function initLogos() {
+    var logoEl = document.querySelector('.ii-logo-overlay img');
+    if (!logoEl) return;
+    var SZ = FS * 4;  // render at 4× for crispness, draw scaled down
+    headLogo = buildVariant(logoEl, '#93cc93', SZ);
+    dimLogo  = buildVariant(logoEl, '#156226', SZ);
+  }
+
+  function setup() {
+    canvas.width  = canvas.offsetWidth  || window.innerWidth;
+    canvas.height = canvas.offsetHeight || 124;
+    numCols = Math.floor(canvas.width / FS);
+    drops = []; spds = [];
+    for (var i = 0; i < numCols; i++) {
+      // Stagger by column so adjacent drops are never at the same y
+      drops[i] = -(((i * 6.1) % (canvas.height / FS * 2.5)) + Math.random() * (canvas.height / FS));
+      spds[i]  = 0.07 + Math.random() * 0.22;
+    }
+  }
+  setup();
+
+  // Init logos after DOM is ready
+  var logoEl = document.querySelector('.ii-logo-overlay img');
+  if (logoEl && logoEl.complete) {
+    initLogos();
+  } else if (logoEl) {
+    logoEl.addEventListener('load', initLogos);
+  } else {
+    window.addEventListener('load', initLogos);
+  }
+
+  function frame() {
+    // Fade previous frame — this creates the trailing tail
+    ctx.fillStyle = 'rgba(0,0,0,0.13)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (headLogo && dimLogo) {
+      for (var i = 0; i < numCols; i++) {
+        var row = Math.floor(drops[i]);
+        var y   = row * FS;
+
+        if (y >= 0 && y < canvas.height) {
+          // Head: bright logo with green glow
+          ctx.shadowBlur  = 3;
+          ctx.shadowColor = '#00ff41';
+          ctx.drawImage(headLogo, i * FS, y, FS, FS);
+          ctx.shadowBlur  = 0;
+
+          // Second step: dimmer logo just below head
+          var y2 = y + FS;
+          if (y2 < canvas.height) {
+            ctx.shadowBlur  = 1;
+            ctx.shadowColor = '#00ff41';
+            ctx.drawImage(dimLogo, i * FS, y2, FS, FS);
+            ctx.shadowBlur  = 0;
+          }
+        }
+
+        drops[i] += spds[i];
+        if (drops[i] * FS > canvas.height + FS && Math.random() > 0.80) {
+          drops[i] = -(2 + Math.random() * (canvas.height / FS * 1.5));
+          spds[i]  = 0.07 + Math.random() * 0.22;
+        }
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+  window.addEventListener('resize', function(){ setup(); });
+})();
+</script>
+<!-- SIDE NAV -->
+<div id="ii-sidenav-overlay"></div>
+<nav id="ii-sidenav" aria-label="Site navigation">
+  <div class="ii-sidenav-header">
+    <img class="ii-sidenav-logo" id="ii-sidenav-logo" src="assets/asset-9cb167bc.png" alt="SMiiLEY" draggable="false">
+    <button class="ii-sidenav-close" id="ii-sidenav-close" aria-label="Close menu">✕</button>
+  </div>
+  <ul class="ii-sidenav-list">
+    <li><a class="ii-sidenav-btn" href="ii-brand.html">Home</a></li>
+    <li><a class="ii-sidenav-btn" href="cc.html">CANT CONTA<span style="text-transform:none">ii</span>N</a></li>
+    <li><a class="ii-sidenav-btn" href="recs.html">Eyes Set Recs</a></li>
+    <li><a class="ii-sidenav-btn" href="events.html">Eyes Set Events</a></li>
+    <li><a class="ii-sidenav-btn active" href="merch.html">Merch</a></li>
+  </ul>
+</nav>
+<script>
+(function(){
+  var overlay  = document.getElementById('ii-sidenav-overlay');
+  var nav      = document.getElementById('ii-sidenav');
+  var openBtn  = document.getElementById('ii-nav-smiley-btn');
+  var closeBtn = document.getElementById('ii-sidenav-close');
+  var navLogo  = document.querySelector('.ii-logo-overlay');
+
+  function openNav()  { nav.classList.add('open');    overlay.classList.add('open'); }
+  function closeNav() { nav.classList.remove('open'); overlay.classList.remove('open'); }
+
+  openBtn.addEventListener('click', function() {
+    nav.classList.contains('open') ? closeNav() : openNav();
+  });
+  closeBtn.addEventListener('click', closeNav);
+  if (navLogo) { navLogo.addEventListener('click', function() { window.location.href = 'ii-brand.html'; }); }
+  overlay.addEventListener('click', closeNav);
+})();
+</script>
+
+<!-- LANDING PAGE -->
+
+<!-- EMAIL POPUP -->
+<div class="ii-popup-overlay" id="ii-popup-overlay">
+  <div class="ii-popup">
+    <button class="ii-popup-close" id="ii-popup-close" aria-label="Close">✕</button>
+    <div class="ii-popup-tag">@ii.galway</div>
+    <h2>Stay in the loop.</h2>
+    <p>Strictly no spam, just announcements you might miss.</p>
+    <div class="ii-popup-form" id="ii-popup-form-wrap">
+      <input class="ii-popup-input" type="email" id="ii-popup-email" placeholder="your@email.com" autocomplete="email"/>
+      <button class="ii-popup-submit" id="ii-popup-submit">Join the list →</button>
+    </div>
+    <div class="ii-popup-confirm" id="ii-popup-confirm">
+      <p>You're in. See you at the next one.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('ii-popup-overlay');
+  var closeBtn = document.getElementById('ii-popup-close');
+  var submitBtn = document.getElementById('ii-popup-submit');
+  var emailInput = document.getElementById('ii-popup-email');
+  var formWrap = document.getElementById('ii-popup-form-wrap');
+  var confirm = document.getElementById('ii-popup-confirm');
+
+  // Only show once per session
+  if (sessionStorage.getItem('ii-popup-seen')) return;
+
+  // Trigger 12 seconds after user clicks enter, not page load
+  window.addEventListener('ii-entered', function(){
+    setTimeout(function(){
+      overlay.classList.add('active');
+    }, 5250);
+  }, { once: true });
+
+  function dismiss(){
+    overlay.classList.remove('active');
+    sessionStorage.setItem('ii-popup-seen', '1');
+  }
+
+  closeBtn.addEventListener('click', dismiss);
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay) dismiss();
+  });
+
+  submitBtn.addEventListener('click', function(){
+    var email = emailInput.value.trim();
+    if (!email || !email.includes('@')) {
+      emailInput.style.borderColor = '#8b2020';
+      setTimeout(function(){ emailInput.style.borderColor = ''; }, 1200);
+      return;
+    }
+    // TODO: wire to your mailing list provider here
+    formWrap.style.display = 'none';
+    confirm.style.display = 'block';
+    sessionStorage.setItem('ii-popup-seen', '1');
+    setTimeout(dismiss, 2800);
+  });
+
+  emailInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') submitBtn.click();
+  });
+})();
+</script>
+
+<!-- PAST EVENT POSTER DATA (hidden) -->
+<img id="diff-poster-data" src="assets/asset-873fb88b.jpg" style="display:none" alt="">
+<img id="dp-poster-data" src="assets/asset-873fb88b.jpg" style="display:none" alt="">
+<img id="ip-poster-data" src="assets/asset-bae90c42.jpg" style="display:none" alt="">
+<img id="mb-poster-data" src="assets/asset-ddbe594c.jpg" style="display:none" alt="">
+
+<!-- LIGHTBOX -->
+<div id="ii-lightbox">
+  <button id="ii-lightbox-close">✕</button>
+  <img id="ii-lightbox-img" src="" alt="">
+</div>
+
+<script>
+(function() {
+  var vid = document.querySelector('.ii-header-video');
+  if (vid) {
+    vid.playbackRate = 0.38;
+    vid.addEventListener('play', function() { vid.playbackRate = 0.38; });
+    vid.play().catch(function() {
+      document.addEventListener('touchstart', function tryPlay() {
+        vid.play().then(function() {
+          document.removeEventListener('touchstart', tryPlay);
+        }).catch(function(){});
+      }, { once: true });
+    });
+  }
+  var canvas = document.getElementById('header-highlight-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var blobs = [];
+  for (var i = 0; i < 6; i++) {
+    blobs.push({
+      x: Math.random(),
+      y: Math.random(),
+      r: 0.1 + Math.random() * 0.18,
+      vx: (Math.random() - 0.5) * 0.0008,
+      vy: (Math.random() - 0.5) * 0.0008,
+      opacity: 0.2 + Math.random() * 0.35,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.008 + Math.random() * 0.012
+    });
+  }
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    var t = Date.now() * 0.001;
+    blobs.forEach(function(b) {
+      b.x += b.vx;
+      b.y += b.vy;
+      if (b.x < 0 || b.x > 1) b.vx *= -1;
+      if (b.y < 0 || b.y > 1) b.vy *= -1;
+      var pulse = b.opacity * (0.7 + 0.3 * Math.sin(t * b.speed * 60 + b.phase));
+      var grd = ctx.createRadialGradient(b.x*w, b.y*h, 0, b.x*w, b.y*h, b.r*w);
+      grd.addColorStop(0, 'rgba(80,255,120,' + pulse + ')');
+      grd.addColorStop(1, 'rgba(0,80,20,0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, w, h);
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+  // Scale CDJ deck to fit container on mobile, centred
+  function scaleDeck() {
+    var win = document.getElementById('deck-window');
+    if (!win) return;
+    var wrap = win.parentElement;
+    var wrapW = wrap.offsetWidth;
+    var nativeW = 840;
+    var nativeH = 564;
+    var scale = (wrapW / nativeW) * 1.2;
+    var scaledH = nativeH * scale;
+    win.style.width = nativeW + 'px';
+    win.style.height = nativeH + 'px';
+    win.style.position = 'absolute';
+    win.style.left = '50%';
+    win.style.top = '0';
+    win.style.transformOrigin = 'top center';
+    win.style.transform = 'translateX(-50%) scale(' + scale + ')';
+    wrap.style.position = 'relative';
+    wrap.style.paddingBottom = scaledH + 'px';
+    wrap.style.height = '0';
+  }
+  scaleDeck();
+  window.addEventListener('resize', scaleDeck);
+
+</script>
+</body>
+</html>
