@@ -1582,6 +1582,9 @@ function _doTogglePlay() {
 
 function startSource(offset) {
   if (state.sourceNode) { try { state.sourceNode.stop(); } catch(e){} }
+  // Always restore gain — may be 0 from screen-off fade
+  state.gainNode.gain.cancelScheduledValues(state.audioCtx.currentTime);
+  state.gainNode.gain.setValueAtTime(1, state.audioCtx.currentTime);
   sourceGen++;
   const gen = sourceGen;
   state.sourceNode = state.audioCtx.createBufferSource();
