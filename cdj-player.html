@@ -1191,7 +1191,7 @@ canvas3d.addEventListener('touchstart', (e) => {
   touchResult = raycastScene(getMouseNDC(fakeE));
   if (!touchResult) return;
   if (touchResult.type === 'hitbox') {
-    if (touchResult.name === 'jog')  { isDraggingJog = true; startJogDrag(t.clientX); return; }
+    if (touchResult.name === 'jog')  { if (state._interrupted) { ensureAudioCtx(); _recoverIfInterrupted(); } isDraggingJog = true; startJogDrag(t.clientX); return; }
     if (touchResult.name === 'play') { heldButton = 'play'; pressButton('play'); return; }
     if (touchResult.name === 'cue')  { heldButton = 'cue';  pressButton('cue');  return; }
   }
@@ -1545,8 +1545,8 @@ function tapeStop() {
 
 function togglePlay() {
   if (!state.trackLoaded) { state._pendingPlay = true; return; }
+  if (state._interrupted) { ensureAudioCtx(); _recoverIfInterrupted(); return; }
   ensureAudioCtx();
-  // await resume on iOS where AudioContext starts suspended
   const resumePromise = state.audioCtx.state === 'suspended' ? state.audioCtx.resume() : Promise.resolve();
   resumePromise.then(() => _doTogglePlay());
 }
@@ -1609,12 +1609,10 @@ function startSource(offset) {
 
 function pressCue() {
   if (!state.trackLoaded) return;
-  // Kill any jog inertia so getPos() doesn't return the stale jogAudioPos
+  if (state._interrupted) { ensureAudioCtx(); _recoverIfInterrupted(); return; }
   state.jogEngaged  = false;
   state.jogVelocity = 0;
-  console.log('[CUE] pressed — pos before:', getPos().toFixed(3), 'jogEngaged:', state.jogEngaged, 'jogAudioPos:', state.jogAudioPos.toFixed(3));
   startSource(0);
-  console.log('[CUE] after startSource(0) — pauseOffset:', state.pauseOffset);
 }
 
 function pressButton(name) {
@@ -1915,12 +1913,55 @@ function _updateLabels() {
 
 animate();
 
-// ── Screen off: save position and pause cleanly; screen on: resume on touch ──
+// ── Watchdog: detects audio cut off by iOS and records recovery position ──
+// Runs every 500ms. If audio was playing but context got suspended, saves
+// position and marks state as interrupted so next user action can recover.
+state._interrupted = false;
+state._recoveryPos = 0;
+state._lastWatchdogPos = 0;
+state._lastWatchdogTime = 0;
+
+setInterval(() => {
+  if (!state.audioCtx || !state.trackLoaded) return;
+
+  const ctxSuspended = state.audioCtx.state === 'suspended';
+  const nowTime = state.audioCtx.state !== 'suspended' ? state.audioCtx.currentTime : state._lastWatchdogTime;
+
+  if (state.playing) {
+    if (ctxSuspended) {
+      // Context was killed while we thought we were playing — save position
+      state._recoveryPos = state.pauseOffset + (nowTime - state._lastWatchdogTime) * state.playbackRate;
+      state._recoveryPos = Math.max(0, Math.min(state._recoveryPos, state.duration || 0));
+      state._interrupted = true;
+      state.playing = false;
+      updatePills();
+    } else {
+      // Still playing normally — keep updating watchdog anchor
+      state._lastWatchdogPos = getPos();
+      state._lastWatchdogTime = nowTime;
+    }
+  }
+}, 500);
+
+// Called by any user interaction — resumes from watchdog-saved position
+function _recoverIfInterrupted() {
+  if (!state._interrupted) return;
+  state._interrupted = false;
+  state.pauseOffset = state._recoveryPos;
+  if (state.audioCtx && state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume().then(() => startSource(state.pauseOffset));
+  } else {
+    startSource(state.pauseOffset);
+  }
+}
+
+// ── Screen off: fade cleanly before iOS kills thread ──
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && state.audioCtx && state.playing) {
-    // Save live position before stopping
-    state.pauseOffset = getPos();
-    // Tiny gain ramp to silence before stopping — avoids click
+    state._recoveryPos = getPos();
+    state._interrupted = true;
+    state.playing = false;
+    updatePills();
     const ctx = state.audioCtx;
     const now = ctx.currentTime;
     state.gainNode.gain.cancelScheduledValues(now);
@@ -1928,14 +1969,10 @@ document.addEventListener('visibilitychange', () => {
     state.gainNode.gain.linearRampToValueAtTime(0, now + 0.04);
     setTimeout(() => {
       try { state.sourceNode.stop(); } catch(e) {}
-      // Restore gain for next play
-      state.gainNode.gain.cancelScheduledValues(ctx.currentTime);
-      state.gainNode.gain.setValueAtTime(1, ctx.currentTime);
     }, 60);
-    state.playing = false;
-    updatePills();
   }
 });
+
 // iOS won't resume AudioContext without a real user gesture — hook every touch
 document.addEventListener('touchstart', () => {
   if (state.audioCtx && state.audioCtx.state === 'suspended') state.audioCtx.resume();
