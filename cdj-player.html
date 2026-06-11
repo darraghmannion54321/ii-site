@@ -1883,6 +1883,18 @@ function _updateLabels() {
 
 animate();
 
+// ── Resume AudioContext after screen-off / tab switch ──
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && state.audioCtx && state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume();
+  }
+});
+window.addEventListener('focus', () => {
+  if (state.audioCtx && state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume();
+  }
+});
+
 // ── Keyboard ──
 document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
