@@ -1879,7 +1879,7 @@ const products = {
     <img src="assets/asset-189c2008.gif" alt="ii smiley" id="ii-landing-logo-img"/>
   </div>
   <button class="ii-enter-btn" id="ii-enter-btn">[enter]</button></div>
-  <span id="ii-push-label">[PUSH]</span>
+  <span id="ii-push-label">[PRESS]</span>
 </div>
 <script>
 (function(){
@@ -1925,14 +1925,18 @@ const products = {
   var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (isMobile) {
-    // Mobile: transparent bg, show container door immediately, whole screen = tap to enter
-    landing.classList.add('mobile-mode');
+    // Mobile: hide black overlay so container door shows, show [PRESS] to prompt tap
+    var fadeIn = document.getElementById('ii-fade-in');
+    if (fadeIn) fadeIn.style.display = 'none';
     landing.style.background = 'transparent';
-    vid.play().catch(function(){});
+
+    var pushLabel = document.getElementById('ii-push-label');
+    if (pushLabel) pushLabel.style.display = 'block';
 
     landing.addEventListener('touchstart', function onTap() {
       landing.removeEventListener('touchstart', onTap);
-      enterBtn.click();
+      if (pushLabel) pushLabel.style.display = 'none';
+      vid.play().catch(function() { showUI(); });
     }, { once: true, passive: true });
   } else {
     // Desktop — autoplay via canplaythrough
