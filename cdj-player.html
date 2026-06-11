@@ -556,7 +556,7 @@ let cueButton  = null;
 let playButton = null;
 
 const loader = new THREE.GLTFLoader();
-loader.load('/deck.glb', (gltf) => {
+loader.load('deck.glb', (gltf) => {
   deckModel = gltf.scene;
   deckModel.traverse(child => {
     if (child.isMesh) {

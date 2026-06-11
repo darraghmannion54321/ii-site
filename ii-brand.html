@@ -215,6 +215,9 @@
 
 
   /* EVENT POSTER */
+  .event-poster::-webkit-media-controls { display: none !important; }
+  .event-poster::-webkit-media-controls-enclosure { display: none !important; }
+  .event-poster::-webkit-media-controls-overlay-play-button { display: none !important; }
   .event-poster {
     width: 100%;
     max-width: 420px;
@@ -2147,12 +2150,13 @@ const products = {
   }
 
   document.querySelectorAll('video.event-poster').forEach(function(v) {
-    v.addEventListener('click', function() {
-      lbVid.classList.remove('lb-active');
+    function openPosterLb() {
+      lbVid.src = ''; lbVid.classList.remove('lb-active');
       lbImg.src = 'assets/poster-current.png';
-      lbImg.style.display = 'block';
       lb.classList.add('open');
-    });
+    }
+    v.addEventListener('click', openPosterLb);
+    v.addEventListener('touchend', function(e) { e.preventDefault(); openPosterLb(); });
   });
 
   document.getElementById('ii-lightbox-close').addEventListener('click', closeLb);
