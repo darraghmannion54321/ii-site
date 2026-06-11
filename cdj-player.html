@@ -1340,22 +1340,21 @@ function selectTrack(idx) {
       state.trackLoaded = true; state.pauseOffset = 0; state.cuePoint = 0;
       updatePills(); setTrackStatus(''); onTrackReady(t);
     }, err => { console.error('[CDJ] decode failed', t.djName, err); setTrackStatus('DECODE ERROR'); });
-  } else if (t.path) {
-    // Lazy fetch + decode on first select
+  } else if (t.path || t.file) {
+    // Lazy load on first select — fetch URL or read File
     setTrackStatus('LOADING...');
-    fetch(t.path)
-      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-      .then(arrayBuf => {
-        setTrackStatus('DECODING...');
-        return state.audioCtx.decodeAudioData(arrayBuf);
-      })
+    const bufPromise = t.file
+      ? new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = rej; r.readAsArrayBuffer(t.file); })
+      : fetch(t.path).then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
+    bufPromise
+      .then(arrayBuf => { setTrackStatus('DECODING...'); return state.audioCtx.decodeAudioData(arrayBuf); })
       .then(buffer => {
-        t.buffer = buffer; t.duration = buffer.duration;
+        t.buffer = buffer; t.duration = buffer.duration; t.file = null;
         state.audioBuffer = buffer; state.duration = buffer.duration;
         state.trackLoaded = true; state.pauseOffset = 0; state.cuePoint = 0;
         updatePills(); setTrackStatus(''); onTrackReady(t);
       })
-      .catch(err => { console.error('[CDJ] load failed', t.path, err); setTrackStatus('LOAD ERROR'); });
+      .catch(err => { console.error('[CDJ] load failed', t.path || t.file?.name, err); setTrackStatus('LOAD ERROR'); });
   }
 }
 
@@ -1433,16 +1432,14 @@ function _decodeAndStore(arrayBuf, djName, trackTitle) {
 function setTrackStatus(msg) { /* suppressed */ }
 
 function loadAudioFile(file) {
-  ensureAudioCtx();
   const raw = file.name.replace(/\.[^.]+$/, '');
   const sep = raw.indexOf(' - ');
-  const djName     = (sep > -1 ? raw.slice(0, sep) : raw).toUpperCase();
-  const trackTitle = sep > -1 ? raw.slice(sep + 3).toUpperCase() : '';
-  setTrackStatus('LOADING ' + djName + '...');
-  const reader = new FileReader();
-  reader.onload = (ev) => _decodeAndStore(ev.target.result, djName, trackTitle);
-  reader.onerror = (e) => { setTrackStatus('READ ERROR'); console.error('[CDJ] FileReader error', e); };
-  reader.readAsArrayBuffer(file);
+  const djName     = (sep > -1 ? raw.slice(0, sep) : raw).toUpperCase().replace(/II/g, 'ii');
+  const trackTitle = sep > -1 ? raw.slice(sep + 3).toUpperCase().replace(/II/g, 'ii') : '';
+  const artwork = djName === 'RISTO' ? RISTO_ART : djName === 'DARRAGH_ii' ? DARRAGH_ART : djName === 'ANDREW MCCARTHY' ? ANDREW_ART : DEFAULT_ART;
+  // Register immediately — store the File object for lazy read on select
+  trackLibrary.push({ djName, trackTitle, artwork, buffer: null, duration: null, arrayBuf: null, path: null, file });
+  renderTrackList(document.getElementById('track-search').value);
 }
 
 // ── Audio position foundation ─────────────────────────────────────────────────
