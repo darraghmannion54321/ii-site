@@ -1896,7 +1896,17 @@ const products = {
   if (isMobile) {
     landing.style.background = 'transparent';
     fadeIn.style.display = 'none';
-    vid.play().catch(function(){ showUI(); });
+    // Try autoplay — if blocked, wait for first touch then play
+    // Never call showUI() here — logo only appears when video ends
+    vid.play().catch(function() {
+      var played = false;
+      document.addEventListener('touchstart', function onT() {
+        if (played) return;
+        played = true;
+        document.removeEventListener('touchstart', onT);
+        vid.play().catch(function(){});
+      }, { passive: true });
+    });
   } else {
     // Desktop — autoplay via canplaythrough
     vid.addEventListener('canplaythrough', launchVideo, { once: true });
