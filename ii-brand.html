@@ -732,6 +732,36 @@
     transition:opacity 0.9s ease;
   }
   #ii-landing { touch-action: none; }
+  /* Mobile: transparent bg so container door shows through immediately */
+  #ii-push-label {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    bottom: 38%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #2e8b4a;
+    text-shadow: 0 0 8px rgba(120,220,140,0.9), 0 0 30px rgba(120,220,140,0.6), 0 0 70px rgba(120,220,140,0.35);
+    white-space: nowrap;
+    pointer-events: none;
+    animation: pushPulse 2s ease-in-out infinite;
+  }
+  @keyframes pushPulse {
+    0%,100% { opacity:1; }
+    50%      { opacity:0.5; }
+  }
+  @media (max-width: 768px) {
+    #ii-landing.mobile-mode { background: transparent; }
+    #ii-landing.mobile-mode #ii-fade-in { display: none; }
+    #ii-landing.mobile-mode #ii-landing-ui { display: none; }
+    #ii-push-label { display: block; }
+  }
   #ii-landing.fade-out {
     opacity:0;
     pointer-events:none;
@@ -1849,6 +1879,7 @@ const products = {
     <img src="assets/asset-189c2008.gif" alt="ii smiley" id="ii-landing-logo-img"/>
   </div>
   <button class="ii-enter-btn" id="ii-enter-btn">[enter]</button></div>
+  <span id="ii-push-label">[PUSH]</span>
 </div>
 <script>
 (function(){
@@ -1894,24 +1925,15 @@ const products = {
   var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (isMobile) {
-    function waitForTap() {
-      landing.addEventListener('touchstart', function onTap() {
-        landing.removeEventListener('touchstart', onTap);
-        launchVideo();
-      }, { once: true, passive: true });
-    }
-    // Try autoplay - but verify video is actually playing after 300ms
-    vid.play().then(function() {
-      setTimeout(function() {
-        if (!vid.paused && vid.currentTime > 0) {
-          launchVideo(); // actually playing
-        } else {
-          waitForTap(); // resolved but not playing — wait for tap
-        }
-      }, 300);
-    }).catch(function() {
-      waitForTap();
-    });
+    // Mobile: transparent bg, show container door immediately, whole screen = tap to enter
+    landing.classList.add('mobile-mode');
+    landing.style.background = 'transparent';
+    vid.play().catch(function(){});
+
+    landing.addEventListener('touchstart', function onTap() {
+      landing.removeEventListener('touchstart', onTap);
+      enterBtn.click();
+    }, { once: true, passive: true });
   } else {
     // Desktop — autoplay via canplaythrough
     vid.addEventListener('canplaythrough', launchVideo, { once: true });
