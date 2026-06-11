@@ -1414,17 +1414,46 @@ function triggerUSBRemove() {
 // Pre-fetched ArrayBuffers waiting for AudioContext to exist before decoding
 const _pendingDecode = [];
 
+// ── Silent audio keepalive — holds iOS audio session alive through screen lock ──
+// Generates a real silent WAV blob so iOS accepts it as an active audio session.
+function _makeSilentWavUrl() {
+  const sr = 8000, ch = 1, bps = 16, nSamples = sr; // 1 second
+  const dataSize = nSamples * ch * (bps / 8);
+  const buf = new ArrayBuffer(44 + dataSize);
+  const v = new DataView(buf);
+  const str = (off, s) => { for (let i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + dataSize, true); str(8, 'WAVE');
+  str(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true);
+  v.setUint16(22, ch, true); v.setUint32(24, sr, true);
+  v.setUint32(28, sr * ch * bps / 8, true); v.setUint16(32, ch * bps / 8, true);
+  v.setUint16(34, bps, true); str(36, 'data'); v.setUint32(40, dataSize, true);
+  // data bytes are already 0 (silence)
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+let _keepAliveEl = null;
+function _startKeepAlive() {
+  if (_keepAliveEl) return;
+  _keepAliveEl = document.createElement('audio');
+  _keepAliveEl.src = _makeSilentWavUrl();
+  _keepAliveEl.loop = true;
+  _keepAliveEl.volume = 0;
+  _keepAliveEl.setAttribute('playsinline', '');
+  _keepAliveEl.setAttribute('webkit-playsinline', '');
+  document.body.appendChild(_keepAliveEl);
+  _keepAliveEl.play().catch(() => {});
+}
+
 function ensureAudioCtx() {
   if (!state.audioCtx) {
     state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     state.gainNode = state.audioCtx.createGain();
     state.gainNode.connect(state.audioCtx.destination);
-    // Drain any tracks fetched before this moment
     _pendingDecode.splice(0).forEach(({ arrayBuf, djName, trackTitle }) =>
       _decodeAndStore(arrayBuf, djName, trackTitle)
     );
   }
   if (state.audioCtx.state === 'suspended') state.audioCtx.resume();
+  _startKeepAlive();
 }
 
 function _decodeAndStore(arrayBuf, djName, trackTitle) {
