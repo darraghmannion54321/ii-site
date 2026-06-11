@@ -1849,7 +1849,6 @@ const products = {
     <img src="assets/asset-189c2008.gif" alt="ii smiley" id="ii-landing-logo-img"/>
   </div>
   <button class="ii-enter-btn" id="ii-enter-btn">[enter]</button></div>
-  <span id="ii-press-label" style="display:none;position:absolute;z-index:10;bottom:38%;left:50%;transform:translateX(-50%);font-family:inherit;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:#2e8b4a;text-shadow:0 0 8px rgba(120,220,140,0.9),0 0 30px rgba(120,220,140,0.6);white-space:nowrap;pointer-events:none;">[PRESS]</span>
 </div>
 <script>
 (function(){
@@ -1895,17 +1894,10 @@ const products = {
   var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (isMobile) {
-    var pressLabel = document.getElementById('ii-press-label');
-    if (pressLabel) pressLabel.style.display = 'block';
-
-    function waitForTap() {
-      landing.addEventListener('touchstart', function onTap() {
-        landing.removeEventListener('touchstart', onTap);
-        if (pressLabel) pressLabel.style.display = 'none';
-        launchVideo();
-      }, { once: true, passive: true });
-    }
-    waitForTap();
+    // No black overlay — show logo + [enter] immediately, video plays in background
+    fadeIn.style.display = 'none';
+    showUI();
+    vid.play().catch(function(){});
   } else {
     // Desktop — autoplay via canplaythrough
     vid.addEventListener('canplaythrough', launchVideo, { once: true });
