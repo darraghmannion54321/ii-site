@@ -732,36 +732,6 @@
     transition:opacity 0.9s ease;
   }
   #ii-landing { touch-action: none; }
-  /* Mobile: transparent bg so container door shows through immediately */
-  #ii-push-label {
-    display: none;
-    position: absolute;
-    z-index: 10;
-    bottom: 38%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: none;
-    border: none;
-    font-family: inherit;
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #2e8b4a;
-    text-shadow: 0 0 8px rgba(120,220,140,0.9), 0 0 30px rgba(120,220,140,0.6), 0 0 70px rgba(120,220,140,0.35);
-    white-space: nowrap;
-    pointer-events: none;
-    animation: pushPulse 2s ease-in-out infinite;
-  }
-  @keyframes pushPulse {
-    0%,100% { opacity:1; }
-    50%      { opacity:0.5; }
-  }
-  @media (max-width: 768px) {
-    #ii-landing.mobile-mode { background: transparent; }
-    #ii-landing.mobile-mode #ii-fade-in { display: none; }
-    #ii-landing.mobile-mode #ii-landing-ui { display: none; }
-    #ii-push-label { display: block; }
-  }
   #ii-landing.fade-out {
     opacity:0;
     pointer-events:none;
@@ -1879,7 +1849,7 @@ const products = {
     <img src="assets/asset-189c2008.gif" alt="ii smiley" id="ii-landing-logo-img"/>
   </div>
   <button class="ii-enter-btn" id="ii-enter-btn">[enter]</button></div>
-  <span id="ii-push-label">[PRESS]</span>
+  <span id="ii-press-label" style="display:none;position:absolute;z-index:10;bottom:38%;left:50%;transform:translateX(-50%);font-family:inherit;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:#2e8b4a;text-shadow:0 0 8px rgba(120,220,140,0.9),0 0 30px rgba(120,220,140,0.6);white-space:nowrap;pointer-events:none;">[PRESS]</span>
 </div>
 <script>
 (function(){
@@ -1925,19 +1895,17 @@ const products = {
   var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (isMobile) {
-    // Mobile: hide black overlay so container door shows, show [PRESS] to prompt tap
-    var fadeIn = document.getElementById('ii-fade-in');
-    if (fadeIn) fadeIn.style.display = 'none';
-    landing.style.background = 'transparent';
+    var pressLabel = document.getElementById('ii-press-label');
+    if (pressLabel) pressLabel.style.display = 'block';
 
-    var pushLabel = document.getElementById('ii-push-label');
-    if (pushLabel) pushLabel.style.display = 'block';
-
-    landing.addEventListener('touchstart', function onTap() {
-      landing.removeEventListener('touchstart', onTap);
-      if (pushLabel) pushLabel.style.display = 'none';
-      vid.play().catch(function() { showUI(); });
-    }, { once: true, passive: true });
+    function waitForTap() {
+      landing.addEventListener('touchstart', function onTap() {
+        landing.removeEventListener('touchstart', onTap);
+        if (pressLabel) pressLabel.style.display = 'none';
+        launchVideo();
+      }, { once: true, passive: true });
+    }
+    waitForTap();
   } else {
     // Desktop — autoplay via canplaythrough
     vid.addEventListener('canplaythrough', launchVideo, { once: true });
