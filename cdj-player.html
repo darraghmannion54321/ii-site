@@ -1883,17 +1883,27 @@ function _updateLabels() {
 
 animate();
 
-// ── Resume AudioContext after screen-off / tab switch ──
+// ── Screen off: fade out cleanly; screen on: resume on next touch ──
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && state.audioCtx && state.audioCtx.state === 'suspended') {
-    state.audioCtx.resume();
+  if (document.hidden) {
+    // Page going to background — hard-stop audio immediately to avoid harsh cutoff
+    if (state.audioCtx && state.playing) {
+      try {
+        state.gainNode.gain.cancelScheduledValues(state.audioCtx.currentTime);
+        state.gainNode.gain.setValueAtTime(0, state.audioCtx.currentTime);
+        state.sourceNode.stop();
+      } catch(e) {}
+      state.playing = false;
+      state.pauseOffset = state.pauseOffset; // keep position
+      updatePills();
+    }
+    if (state.audioCtx) state.audioCtx.suspend();
   }
 });
-window.addEventListener('focus', () => {
-  if (state.audioCtx && state.audioCtx.state === 'suspended') {
-    state.audioCtx.resume();
-  }
-});
+// iOS won't resume AudioContext without a real user gesture — hook every touch
+document.addEventListener('touchstart', () => {
+  if (state.audioCtx && state.audioCtx.state === 'suspended') state.audioCtx.resume();
+}, { passive: true });
 
 // ── Keyboard ──
 document.addEventListener('keydown', (e) => {
