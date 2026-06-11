@@ -1347,14 +1347,18 @@ function selectTrack(idx) {
       ? new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = rej; r.readAsArrayBuffer(t.file); })
       : fetch(t.path).then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
     bufPromise
-      .then(arrayBuf => { setTrackStatus('DECODING...'); return state.audioCtx.decodeAudioData(arrayBuf); })
+      .then(arrayBuf => {
+        setTrackStatus('DECODING...');
+        // Safari decodeAudioData is callback-only, wrap for cross-browser compat
+        return new Promise((res, rej) => state.audioCtx.decodeAudioData(arrayBuf, res, rej));
+      })
       .then(buffer => {
         t.buffer = buffer; t.duration = buffer.duration; t.file = null;
         state.audioBuffer = buffer; state.duration = buffer.duration;
         state.trackLoaded = true; state.pauseOffset = 0; state.cuePoint = 0;
         updatePills(); setTrackStatus(''); onTrackReady(t);
       })
-      .catch(err => { console.error('[CDJ] load failed', t.path || t.file?.name, err); setTrackStatus('LOAD ERROR'); });
+      .catch(err => { console.error('[CDJ] load failed', t.path || (t.file && t.file.name), err); setTrackStatus('LOAD ERROR'); });
   }
 }
 
