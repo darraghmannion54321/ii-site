@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="preload" href="header-video.mp4" as="video" type="video/mp4">
 <title>EYES SET RECS — ii</title>
 <style>
   
@@ -1034,7 +1035,7 @@
 
 
 
-<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline><source src="header-video.mp4" type="video/mp4"></video><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
+<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline preload="auto"><source src="header-video.mp4" type="video/mp4"></video><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
 <button class="ii-nav-smiley-btn" id="ii-nav-smiley-btn" aria-label="Open menu"><img id="ii-nav-smiley-img" src="assets/asset-9cb167bc.png" alt="SMiiLEY" draggable="false"></button>
 <div class="ii-logo-overlay"><a href="/ii-brand.html" style="display:block;text-align:center;"><img src="assets/asset-8996217c.png" alt="Eyes Set Recs" style="height:38px;width:auto;display:block;margin:0 auto;"></a></div></div>
 
@@ -1105,7 +1106,7 @@
 <!-- TERMINAL BIO MODAL -->
 <div id="terminal-overlay">
   <button id="terminal-close">[close]</button>
-  <div id="terminal-label"></div>
+  
   <div id="terminal-text"></div>
 </div>
 
@@ -1258,7 +1259,7 @@ Garments should be thoroughly washed after processing and before wear.
 
   var overlay  = document.getElementById('terminal-overlay');
   var closeBtn = document.getElementById('terminal-close');
-  var labelEl  = document.getElementById('terminal-label');
+  var labelEl  = null;
   var textEl   = document.getElementById('terminal-text');
   var typingTimer = null;
   var cachedLogoSrc = null;
@@ -1291,7 +1292,7 @@ Garments should be thoroughly washed after processing and before wear.
   function openBio(key) {
     var bio = bios[key];
     if (!bio) return;
-    labelEl.textContent = bio.label;
+    if (labelEl) labelEl.textContent = bio.label;
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     typeText(bio.text, textEl);
