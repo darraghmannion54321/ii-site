@@ -1210,7 +1210,6 @@
 <!-- TERMINAL BIO MODAL -->
 <div id="terminal-overlay">
   <button id="terminal-close">[close]</button>
-  <div id="terminal-label"></div>
   <div id="terminal-text"></div>
 </div>
 
@@ -1571,7 +1570,7 @@ Garments should be thoroughly washed after processing and before wear.
 
   var overlay  = document.getElementById('terminal-overlay');
   var closeBtn = document.getElementById('terminal-close');
-  var labelEl  = document.getElementById('terminal-label');
+  var labelEl  = null;
   var textEl   = document.getElementById('terminal-text');
   var typingTimer = null;
   var cachedLogoSrc = null;
@@ -1604,7 +1603,7 @@ Garments should be thoroughly washed after processing and before wear.
   function openBio(key) {
     var bio = bios[key];
     if (!bio) return;
-    labelEl.textContent = bio.label;
+    if (labelEl) labelEl.textContent = bio.label;
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     typeText(bio.text, textEl);
