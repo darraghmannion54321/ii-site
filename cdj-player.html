@@ -1269,25 +1269,14 @@ function autoLoadTracks() {
     const sep = raw.indexOf(' - ');
     const djName     = (sep > -1 ? raw.slice(0, sep) : raw).toUpperCase().replace(/II/g, 'ii');
     const trackTitle = sep > -1 ? raw.slice(sep + 3).toUpperCase().replace(/II/g, 'ii') : '';
-    fetch(path)
-      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-      .then(arrayBuf => {
-        if (state.audioCtx) {
-          // AudioContext already exists (user interacted before fetch finished) — decode now
-          _decodeAndStore(arrayBuf, djName, trackTitle);
-        } else {
-          // No AudioContext yet — queue for when ensureAudioCtx() is first called
-          _pendingDecode.push({ arrayBuf, djName, trackTitle });
-          setTrackStatus(_pendingDecode.length + ' TRACK' + (_pendingDecode.length > 1 ? 'S' : '') + ' READY');
-        }
-      })
-      .catch(e => console.warn('[CDJ] Could not fetch', path, e));
+    const artwork = trackTitle === 'WiiTH EVERY HEARTBEAT' ? DEFAULT_ART : djName === 'RISTO' ? RISTO_ART : djName === 'DARRAGH_ii' ? DARRAGH_ART : djName === 'ANDREW MCCARTHY' ? ANDREW_ART : DEFAULT_ART;
+    trackLibrary.push({ djName, trackTitle, artwork, buffer: null, duration: null, arrayBuf: null, path });
   });
+  renderTrackList('');
 }
 autoLoadTracks();
 
 function openTrackPanel() {
-  ensureAudioCtx(); // drain _pendingDecode so tracks appear immediately
   document.getElementById('track-panel').classList.add('open');
   document.getElementById('track-search').value = '';
   renderTrackList('');
@@ -1342,21 +1331,31 @@ function selectTrack(idx) {
     state.pauseOffset = 0; state.cuePoint = 0;
     updatePills();
     onTrackReady(t);
-  } else {
-    // Decode now — first time this track is selected
+  } else if (t.arrayBuf) {
+    // ArrayBuffer in memory — decode now
     setTrackStatus('DECODING...');
     state.audioCtx.decodeAudioData(t.arrayBuf.slice(0), (buffer) => {
-      t.buffer = buffer;
-      t.duration = buffer.duration;
-      t.arrayBuf = null; // free memory
-      state.audioBuffer = buffer;
-      state.duration = buffer.duration;
-      state.trackLoaded = true;
-      state.pauseOffset = 0; state.cuePoint = 0;
-      updatePills();
-      setTrackStatus('');
-      onTrackReady(t);
+      t.buffer = buffer; t.duration = buffer.duration; t.arrayBuf = null;
+      state.audioBuffer = buffer; state.duration = buffer.duration;
+      state.trackLoaded = true; state.pauseOffset = 0; state.cuePoint = 0;
+      updatePills(); setTrackStatus(''); onTrackReady(t);
     }, err => { console.error('[CDJ] decode failed', t.djName, err); setTrackStatus('DECODE ERROR'); });
+  } else if (t.path) {
+    // Lazy fetch + decode on first select
+    setTrackStatus('LOADING...');
+    fetch(t.path)
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(arrayBuf => {
+        setTrackStatus('DECODING...');
+        return state.audioCtx.decodeAudioData(arrayBuf);
+      })
+      .then(buffer => {
+        t.buffer = buffer; t.duration = buffer.duration;
+        state.audioBuffer = buffer; state.duration = buffer.duration;
+        state.trackLoaded = true; state.pauseOffset = 0; state.cuePoint = 0;
+        updatePills(); setTrackStatus(''); onTrackReady(t);
+      })
+      .catch(err => { console.error('[CDJ] load failed', t.path, err); setTrackStatus('LOAD ERROR'); });
   }
 }
 
