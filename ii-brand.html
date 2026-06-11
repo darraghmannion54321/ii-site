@@ -1894,7 +1894,7 @@ const products = {
   var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (isMobile) {
-    // No black overlay — show logo + [enter] immediately, video plays in background
+    landing.style.background = 'transparent';
     fadeIn.style.display = 'none';
     showUI();
     vid.play().catch(function(){});
