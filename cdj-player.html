@@ -1349,7 +1349,7 @@ function selectTrack(idx) {
     bufPromise
       .then(arrayBuf => {
         setTrackStatus('DECODING...');
-        // Safari decodeAudioData is callback-only, wrap for cross-browser compat
+        // Safari decodeAudioData is callback-only — wrap for cross-browser compat
         return new Promise((res, rej) => state.audioCtx.decodeAudioData(arrayBuf, res, rej));
       })
       .then(buffer => {
@@ -1357,6 +1357,8 @@ function selectTrack(idx) {
         state.audioBuffer = buffer; state.duration = buffer.duration;
         state.trackLoaded = true; state.pauseOffset = 0; state.cuePoint = 0;
         updatePills(); setTrackStatus(''); onTrackReady(t);
+        // Auto-play if user already pressed play while track was loading
+        if (state._pendingPlay) { state._pendingPlay = false; startSource(0); }
       })
       .catch(err => { console.error('[CDJ] load failed', t.path || (t.file && t.file.name), err); setTrackStatus('LOAD ERROR'); });
   }
@@ -1513,8 +1515,13 @@ function tapeStop() {
 }
 
 function togglePlay() {
-  if (!state.trackLoaded) return;
+  if (!state.trackLoaded) { state._pendingPlay = true; return; }
   ensureAudioCtx();
+  // await resume on iOS where AudioContext starts suspended
+  const resumePromise = state.audioCtx.state === 'suspended' ? state.audioCtx.resume() : Promise.resolve();
+  resumePromise.then(() => _doTogglePlay());
+}
+function _doTogglePlay() {
 
   if (state.jogEngaged) {
     // Wheel is spinning — freeze audio at current jog position but let
