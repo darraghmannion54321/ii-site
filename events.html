@@ -224,7 +224,9 @@
     display: block;
     margin: 0 auto 24px;
     border: 1px solid #1a5c2a;
+    cursor: zoom-in;
   }
+
 
   /* EVENTS */
   .event-card {
@@ -699,6 +701,15 @@
     object-fit:contain;
     border:1px solid #1a5c2a;
   }
+  #ii-lightbox video {
+    max-width:min(90vw, 90vh);
+    max-height:90vh;
+    width:min(90vw, 90vh);
+    height:auto;
+    border:1px solid #1a5c2a;
+    display:none;
+  }
+  #ii-lightbox video.lb-active { display:block; }
   #ii-lightbox-close {
     position:absolute;
     top:20px; right:24px;
@@ -947,7 +958,7 @@
   .ii-header {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1100;
     background: #000;
     width: 100%;
     height: 124px;
@@ -959,14 +970,25 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     min-width: 100%;
     z-index: 0;
     pointer-events: none;
     display: block;
     filter: brightness(0.4) saturate(0.7) hue-rotate(20deg);
-    object-fit: cover;
-    object-position: top;
+    object-fit: fill;
+  }
+  .ii-header-video-glow {
+    display: none;
+  }
+  .ii-header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: rgba(80, 200, 80, 0.25);
+    mix-blend-mode: overlay;
   }
   .ii-header-video::-webkit-media-controls { display: none !important; }
   .ii-header-video::-webkit-media-controls-enclosure { display: none !important; }
@@ -1010,6 +1032,7 @@
   }
 
 </style>
+<link rel="stylesheet" href="assets/wip.css">
 </head>
 <body>
 
@@ -1018,7 +1041,7 @@
 
 
 
-<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline><source src="/header-video.mp4" type="video/mp4"></video><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
+<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline><source src="/header-video.mp4" type="video/mp4"></video><video class="ii-header-video-glow" autoplay muted loop playsinline><source src="/header-video.mp4" type="video/mp4"></video><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
 <button class="ii-nav-smiley-btn" id="ii-nav-smiley-btn" aria-label="Open menu"><img id="ii-nav-smiley-img" src="assets/asset-9cb167bc.png" alt="SMiiLEY" draggable="false"></button>
 <div class="ii-logo-overlay"><a href="/ii-brand.html" style="display:block;text-align:center;"><img src="assets/asset-c5b29242.png" alt="" style="height:38px;width:auto;display:block;margin:0 auto;"></a></div></div>
 
@@ -1409,8 +1432,7 @@ window.addEventListener('load', function() {
   var posters = [
     { id: 'ip-poster-data',   label: 'In Parallel — 17 Sept' },
     { id: 'mb-poster-data',   label: 'Mark Blair — 10 Feb 2025' },
-    { id: 'diff-poster-data', label: 'diffrent — 8 May 2025' },
-    { id: 'dp-poster-data',   label: 'ATU SU x ii Dayparty — 10 Feb' }
+    { id: 'diff-poster-data', label: 'diffrent — 8 May 2025' }
   ];
   var grid = document.getElementById('ii-past-events-grid');
   if (!grid) return;
@@ -1518,6 +1540,7 @@ document.addEventListener('click', function(e) {
 <div id="ii-lightbox">
   <button id="ii-lightbox-close">✕</button>
   <img id="ii-lightbox-img" src="" alt="">
+  <video id="ii-lightbox-vid" autoplay muted loop playsinline></video>
 </div>
 
 <script>
@@ -1613,6 +1636,35 @@ document.addEventListener('click', function(e) {
   scaleDeck();
   window.addEventListener('resize', scaleDeck);
 
+</script>
+<script src="assets/wip.js"></script>
+
+<script>
+(function() {
+  var lb    = document.getElementById('ii-lightbox');
+  var lbImg = document.getElementById('ii-lightbox-img');
+  var lbVid = document.getElementById('ii-lightbox-vid');
+
+  function closeLb() {
+    lb.classList.remove('open');
+    lbImg.src = ''; lbImg.classList.remove('lb-active');
+    lbVid.src = ''; lbVid.classList.remove('lb-active');
+  }
+
+  document.querySelectorAll('video.event-poster').forEach(function(v) {
+    v.addEventListener('click', function() {
+      lbVid.classList.remove('lb-active');
+      var png = v.dataset.poster || v.src.replace(/\.mp4$/, '.png').replace(/\.mov$/, '.png');
+      lbImg.src = 'assets/poster-current.png';
+      lbImg.style.display = 'block';
+      lb.classList.add('open');
+    });
+  });
+
+  document.getElementById('ii-lightbox-close').addEventListener('click', closeLb);
+  lb.addEventListener('click', function(e) { if (e.target === lb) closeLb(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLb(); });
+})();
 </script>
 </body>
 </html>

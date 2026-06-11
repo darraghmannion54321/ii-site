@@ -221,7 +221,9 @@
     display: block;
     margin: 0 auto 24px;
     border: 1px solid #1a5c2a;
+    cursor: zoom-in;
   }
+
 
   /* EVENTS */
   .event-card {
@@ -697,6 +699,15 @@
     object-fit:contain;
     border:1px solid #1a5c2a;
   }
+  #ii-lightbox video {
+    max-width:min(90vw, 90vh);
+    max-height:90vh;
+    width:min(90vw, 90vh);
+    height:auto;
+    border:1px solid #1a5c2a;
+    display:none;
+  }
+  #ii-lightbox video.lb-active { display:block; }
   #ii-lightbox-close {
     position:absolute;
     top:20px; right:24px;
@@ -932,12 +943,23 @@
     pointer-events: none;
     user-select: none;
   }
+  .section-header-left a {
+    display: block;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.15s;
+    font-size: 0;
+    line-height: 0;
+    text-decoration: none;
+  }
+  .section-header-left a:hover { opacity: 0.6; }
+  .section-header-left a .section-logo { pointer-events: none; }
 
   /* HEADER */
   .ii-header {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1100;
     background: #000;
     width: 100%;
     height: 124px;
@@ -973,6 +995,7 @@
   }
 
 </style>
+<link rel="stylesheet" href="assets/wip.css">
 </head>
 <body style="background:#000;"><div id="ii-preload-cover" style="position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;"></div>
 
@@ -996,7 +1019,7 @@
     <div class="section-inner">
       <div class="section-header" draggable="true">
         <div class="section-header-left">
-          <img src="assets/asset-c16452b9.png" alt="CAN'T CONTAiiN" class="section-logo" width="301" height="46" draggable="false">
+          <a href="cc.html" draggable="false" style="font-size:0;line-height:0;text-decoration:none;display:block;"><img src="assets/asset-c16452b9.png" alt="CAN'T CONTAiiN" class="section-logo" width="301" height="46" draggable="false"></a>
           
         </div>
         
@@ -1032,7 +1055,7 @@
     <div class="section-inner">
       <div class="section-header" draggable="true">
         <div class="section-header-left">
-          <img src="assets/asset-8996217c.png" alt="EYES SET RECS" class="section-logo" width="274" height="46" draggable="false">
+          <a href="recs.html" draggable="false" style="font-size:0;line-height:0;text-decoration:none;display:block;"><img src="assets/asset-8996217c.png" alt="EYES SET RECS" class="section-logo" width="274" height="46" draggable="false"></a>
           
         </div>
         
@@ -1072,7 +1095,7 @@
     <div class="section-inner">
       <div class="section-header" draggable="true">
         <div class="section-header-left">
-          <img src="assets/asset-c5b29242.png" alt="EYES SET EVENTS" class="section-logo" width="316" height="46" draggable="false">
+          <a href="events.html" draggable="false" style="font-size:0;line-height:0;text-decoration:none;display:block;"><img src="assets/asset-c5b29242.png" alt="EYES SET EVENTS" class="section-logo" width="316" height="46" draggable="false"></a>
         </div>
       </div>
 <video class="event-poster" autoplay muted loop playsinline src="assets/asset-8964e30d.mp4"></video>
@@ -1118,16 +1141,17 @@
     <div class="section-inner">
       <div class="section-header" draggable="true">
         <div class="section-header-left">
-          <img src="assets/asset-bddafd0c.png" alt="MERCH" class="section-logo" width="139" height="46" draggable="false">
+          <a href="merch.html" draggable="false" style="font-size:0;line-height:0;text-decoration:none;display:block;"><img src="assets/asset-bddafd0c.png" alt="MERCH" class="section-logo" width="139" height="46" draggable="false"></a>
           
         </div>
         
       </div>
-      <div class="merch-carousel-wrap">
+      <div class="merch-carousel-wrap wip-wrap">
+        <div class="wip"></div>
   <div class="merch-carousel" id="merch-carousel">
     <div class="merch-slide" data-product="tee">
       <div class="merch-img-wrap"><div class="merch-img-inner">
-        <div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>
+        <div class="merch-ph"></div>
       </div></div>
       <div class="merch-info">
         <h3 class="merch-name">ESR Bleached Logo Tee</h3>
@@ -1137,7 +1161,7 @@
     </div>
     <div class="merch-slide" data-product="cap">
       <div class="merch-img-wrap"><div class="merch-img-inner">
-        <div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>
+        <div class="merch-ph"></div>
       </div></div>
       <div class="merch-info">
         <h3 class="merch-name">ii Cap</h3>
@@ -1147,7 +1171,7 @@
     </div>
     <div class="merch-slide" data-product="ring">
       <div class="merch-img-wrap"><div class="merch-img-inner">
-        <div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>
+        <div class="merch-ph"></div>
       </div></div>
       <div class="merch-info">
         <h3 class="merch-name">ii Ring</h3>
@@ -1195,7 +1219,7 @@
   <div id="product-modal">
     <button class="product-modal-close" id="product-modal-close">✕</button>
     <div class="product-modal-img" id="product-modal-img">
-      <div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>
+      <div class="merch-ph"></div>
     </div>
     <div class="product-modal-body">
       <p class="product-modal-tag" id="product-modal-tag">ii — Merch</p>
@@ -1472,7 +1496,27 @@ loadOrder();
 
 document.addEventListener('DOMContentLoaded', () => {
   initVideo('cc');
-  initVideo('recs');
+  // Recs: use YouTube API to get most recent video (matches recs.html)
+  (function loadRecentRec() {
+    var API_KEY = 'AIzaSyBtHchQHpvpF0Tdyiw3LjX1u06PXzA-rpw';
+    var list = 'PLaKu6TO_lixDlu8gm6_CZK-Cd9D8ZkdIH';
+    fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=' + list + '&key=' + API_KEY)
+      .then(function(r){ return r.json(); })
+      .then(function(data) {
+        var items = (data.items || []).filter(function(i) {
+          return i.snippet.title !== 'Deleted video' && i.snippet.title !== 'Private video';
+        });
+        if (!items.length) return;
+        var vid = items[0].snippet.resourceId.videoId;
+        videoConfig.recs.firstId = vid;
+        var thumb = document.getElementById('recs-thumb');
+        if (thumb) {
+          var img = thumb.querySelector('img');
+          if (img) img.src = 'https://i.ytimg.com/vi/' + vid + '/maxresdefault.jpg';
+        }
+      })
+      .catch(function(){ initVideo('recs'); });
+  })();
 });
 
 
@@ -1631,7 +1675,7 @@ const products = {
         clone.style.cssText = 'width:100%;height:100%;object-fit:cover;';
         modalImg.appendChild(clone);
       } else {
-        modalImg.innerHTML = '<div class="merch-ph"><span class="merch-ph-label">Upload product image</span></div>';
+        modalImg.innerHTML = '<div class="merch-ph"></div>';
       }
     }
 
@@ -2050,11 +2094,25 @@ const products = {
       setTimeout(function(){ emailInput.style.borderColor = ''; }, 1200);
       return;
     }
-    // TODO: wire to your mailing list provider here
-    formWrap.style.display = 'none';
-    confirm.style.display = 'block';
-    sessionStorage.setItem('ii-popup-seen', '1');
-    setTimeout(dismiss, 2800);
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    var formData = new FormData();
+    formData.append('entry.763521026', email);
+    fetch('https://docs.google.com/forms/d/e/1FAIpQLSf4ACLYPYuXbaifGQv0XTctm6LZvyRcA4h3zzppr-AgjpaDlw/formResponse', {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    }).then(function(){
+      formWrap.style.display = 'none';
+      confirm.style.display = 'block';
+      sessionStorage.setItem('ii-popup-seen', '1');
+      setTimeout(dismiss, 2800);
+    }).catch(function(){
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join the list →';
+      emailInput.style.borderColor = '#8b2020';
+      setTimeout(function(){ emailInput.style.borderColor = ''; }, 1200);
+    });
   });
 
   emailInput.addEventListener('keydown', function(e){
@@ -2073,6 +2131,35 @@ const products = {
 <div id="ii-lightbox">
   <button id="ii-lightbox-close">✕</button>
   <img id="ii-lightbox-img" src="" alt="">
+  <video id="ii-lightbox-vid" autoplay muted loop playsinline></video>
 </div>
+<script src="assets/wip.js"></script>
+
+<script>
+(function() {
+  var lb     = document.getElementById('ii-lightbox');
+  var lbImg  = document.getElementById('ii-lightbox-img');
+  var lbVid  = document.getElementById('ii-lightbox-vid');
+
+  function closeLb() {
+    lb.classList.remove('open');
+    lbImg.src = ''; lbImg.classList.remove('lb-active');
+    lbVid.src = ''; lbVid.classList.remove('lb-active');
+  }
+
+  document.querySelectorAll('video.event-poster').forEach(function(v) {
+    v.addEventListener('click', function() {
+      lbVid.classList.remove('lb-active');
+      lbImg.src = 'assets/poster-current.png';
+      lbImg.style.display = 'block';
+      lb.classList.add('open');
+    });
+  });
+
+  document.getElementById('ii-lightbox-close').addEventListener('click', closeLb);
+  lb.addEventListener('click', function(e) { if (e.target === lb) closeLb(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLb(); });
+})();
+</script>
 </body>
 </html>

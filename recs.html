@@ -945,7 +945,7 @@
   .ii-header {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1100;
     background: #000;
     width: 100%;
     height: 124px;
@@ -1025,6 +1025,7 @@
     pointer-events: all;
   }
 </style>
+<link rel="stylesheet" href="assets/wip.css">
 </head>
 <body>
 
@@ -1049,7 +1050,7 @@
       
       <div class="video-wrap" style="pointer-events:none; margin-top:32px;">
         <div id="deck-window">
-          <iframe src="https://eyessetrecs.netlify.app/cdj-player.html" id="deck-iframe"></iframe>
+          <iframe src="cdj-player.html" id="deck-iframe"></iframe>
           <div class="deck-edge top"></div>
           <div class="deck-edge bottom"></div>
           <div class="deck-edge left"></div>
@@ -1134,6 +1135,29 @@ function loadVideo(key) {
   wrap.appendChild(iframe);
   thumb.classList.add('hidden');
 }
+
+// Fetch most recent video from recs playlist and update thumbnail + firstId
+(function loadRecentRec() {
+  var API_KEY = 'AIzaSyBtHchQHpvpF0Tdyiw3LjX1u06PXzA-rpw';
+  var list = 'PLaKu6TO_lixDlu8gm6_CZK-Cd9D8ZkdIH';
+  fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=' + list + '&key=' + API_KEY)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      var items = (data.items || []).filter(function(i) {
+        return i.snippet.title !== 'Deleted video' && i.snippet.title !== 'Private video';
+      });
+      if (!items.length) return;
+      var latest = items[0];
+      var vid = latest.snippet.resourceId.videoId;
+      videoConfig.recs.firstId = vid;
+      var thumb = document.getElementById('recs-thumb');
+      if (thumb) {
+        var img = thumb.querySelector('img');
+        if (img) img.src = 'https://i.ytimg.com/vi/' + vid + '/maxresdefault.jpg';
+      }
+    })
+    .catch(function(){});
+})();
 
 // Check if a YouTube thumbnail is real (not the grey 120x90 placeholder)
 function thumbIsReal(url) {
@@ -1635,5 +1659,6 @@ Garments should be thoroughly washed after processing and before wear.
   window.addEventListener('resize', scaleDeck);
 
 </script>
+<script src="assets/wip.js"></script>
 </body>
 </html>

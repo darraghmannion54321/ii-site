@@ -381,6 +381,186 @@
   }
   .bio-btn:hover { animation:none; color:#fff; }
 
+  /* CATALOGUE */
+  #cc-catalogue { padding: 0 0 40px; }
+  #cc-view-list-wrap {
+    position: relative;
+    border: 1px solid #1a5c2a;
+  }
+  #cc-view-list-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 48px;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.85));
+    pointer-events: none;
+    z-index: 2;
+  }
+  #cc-view-list {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #1a5c2a #000;
+  }
+  #cc-view-list .cc-list-row { border-left: none; border-right: none; }
+  #cc-view-list .cc-list-row:first-child { border-top: none; }
+  #cc-view-list .cc-list-row:last-child { border-bottom: none; position: relative; z-index: 3; }
+  #cc-view-list::-webkit-scrollbar { width: 8px; }
+  #cc-view-list::-webkit-scrollbar-track { background: #000; }
+  #cc-view-list::-webkit-scrollbar-thumb { background: #1a5c2a; border-radius: 0; }
+
+  #cc-cat-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 28px;
+    border: 1px solid #1a5c2a;
+  }
+  .cc-cat-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #1a5c2a;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 10px 0;
+    cursor: crosshair;
+    transition: background 0.15s, color 0.15s;
+  }
+  .cc-cat-tab + .cc-cat-tab { border-left: 1px solid #1a5c2a; }
+  .cc-cat-tab.active { background: #1a5c2a; color: #000; }
+  .cc-cat-tab:hover:not(.active) { color: #fff; }
+
+  .cc-cat-view { display: none; }
+  .cc-cat-view.active { display: block; }
+
+  /* LIST */
+  .cc-view-list { display: flex; flex-direction: column; }
+  .cc-list-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    border: 1px solid #1a5c2a;
+    margin-top: -1px;
+    background: #000;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+  .cc-list-row:hover { background: #fff; }
+  .cc-list-row:hover .cc-num,
+  .cc-list-row:hover .cc-name,
+  .cc-list-row:hover .cc-link { color: #000; }
+  .cc-num {
+    font-size: 0.56rem;
+    letter-spacing: 0.22em;
+    color: #1a5c2a;
+    min-width: 46px;
+    text-transform: uppercase;
+  }
+  .cc-name {
+    flex: 1;
+    font-size: 0.56rem;
+    letter-spacing: 0.22em;
+    color: #fff;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .cc-link {
+    font-size: 0.56rem;
+    letter-spacing: 0.22em;
+    color: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  /* CARDS */
+  .cc-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .cc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 16px;
+    border: 1px solid #1a5c2a;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .cc-card:hover { background: #0a1f0a; }
+  .cc-card-num {
+    font-family: 'Impact', 'Arial Narrow', Arial, sans-serif;
+    font-size: 22px;
+    color: #1a5c2a;
+    line-height: 1;
+  }
+  .cc-card-name {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-transform: uppercase;
+    flex: 1;
+  }
+  .cc-card-cta {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #1a5c2a;
+  }
+
+  /* ACCORDION */
+  .cc-acc-item { border-bottom: 1px solid #111; }
+  .cc-acc-item:first-child { border-top: 1px solid #111; }
+  .cc-acc-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+    cursor: crosshair;
+    user-select: none;
+  }
+  .cc-acc-header:hover .cc-acc-name { color: #1a5c2a; }
+  .cc-acc-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .cc-acc-arrow {
+    font-size: 18px;
+    color: #1a5c2a;
+    line-height: 1;
+    transition: transform 0.2s;
+  }
+  .cc-acc-item.open .cc-acc-arrow { transform: rotate(45deg); }
+  .cc-acc-body {
+    display: none;
+    padding: 0 0 16px 62px;
+  }
+  .cc-acc-item.open .cc-acc-body { display: block; }
+  .cc-acc-link {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #1a5c2a;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .cc-acc-link:hover { color: #fff; }
+
+  @media (max-width: 600px) {
+    .cc-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
   /* PRODUCT MODAL */
   #product-modal-overlay {
     display:none;
@@ -945,7 +1125,7 @@
   .ii-header {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1100;
     background: #000;
     width: 100%;
     height: 124px;
@@ -1008,6 +1188,7 @@
   }
 
 </style>
+<link rel="stylesheet" href="assets/wip.css">
 </head>
 <body>
 
@@ -1053,6 +1234,17 @@
       <div style="text-align:center;padding:0 0 28px;">
         <button class="bio-btn" data-bio="cc">[about]</button>
       </div>
+
+      <!-- CATALOGUE -->
+      <div id="cc-catalogue">
+
+        <!-- populated by YouTube API -->
+        <div id="cc-view-list-wrap"><div id="cc-view-list"></div></div>
+
+
+      </div>
+      <!-- /CATALOGUE -->
+
     </div>
   </div>
 
@@ -1162,9 +1354,9 @@ document.addEventListener('DOMContentLoaded', () => {
       label: '> CAN\'T CONTAiiN // MIX SERIES',
       text: `CANT CONTAiiN is a recorded mix series shot inside a pitch-black shipping container using night vision. Artists perform alone, isolated in a controlled, high-pressure environment where visibility, comfort, and certainty are removed from the process.
 
-Each guest receives a mystery track from the previous artist that must be worked into their set at some point. Failure to include it breaks the chain — removing their ability to select the next track and disrupting the collaborative loop that connects every recording.
+Each guest receives a mystery track from the previous artist that must be worked into their set at some point. Failure to include it breaks the chain removing their ability to select the next track and disrupting the collaborative loop that connects every recording.
 
-Sets typically run 45–60 minutes due to extreme heat and humidity inside the container, which becomes physically limiting over time. This constraint, combined with darkness, isolation, and an unknown musical element, forces focus, adaptability, and instinct-driven performance.
+Sets typically run 45–60 minutes due to heat and humidity inside the container, which becomes limiting over time. This constraint, combined with darkness, isolation, and an unknown musical element, forces an instinct-driven performance.
 
 — ii`
     },
@@ -1533,6 +1725,60 @@ Garments should be thoroughly washed after processing and before wear.
   draw();
 })();
 
+// CATALOGUE — fetch from YouTube playlist
+(function() {
+  var API_KEY    = 'AIzaSyBtHchQHpvpF0Tdyiw3LjX1u06PXzA-rpw';
+  var PLAYLIST   = 'PLaKu6TO_lixCNK6TTCOUJrVZ9uBfB1f97';
+  var list       = document.getElementById('cc-view-list');
+
+  function pad(n) { return n < 10 ? '00' + n : n < 100 ? '0' + n : '' + n; }
+
+  function render(items) {
+    list.innerHTML = '';
+    items.filter(function(item) {
+      return item.snippet.title !== 'Deleted video' && item.snippet.title !== 'Private video';
+    }).forEach(function(item) {
+      var title = item.snippet.title;
+      var vid   = item.snippet.resourceId.videoId;
+      var a     = document.createElement('a');
+      a.className   = 'cc-list-row';
+      a.href        = 'https://www.youtube.com/watch?v=' + vid;
+      a.target      = '_blank';
+      a.rel         = 'noopener';
+      a.innerHTML   =
+        '<span class="cc-name">' + title + '</span>' +
+        '<span class="cc-link">▶ WATCH</span>';
+      list.appendChild(a);
+    });
+    var first = list.querySelector('.cc-list-row');
+    if (first) {
+      list.style.maxHeight = (first.offsetHeight * 5) + 'px';
+    }
+  }
+
+  function fetchPage(pageToken, accumulated) {
+    var url = 'https://www.googleapis.com/youtube/v3/playlistItems'
+      + '?part=snippet&maxResults=50&playlistId=' + PLAYLIST
+      + '&key=' + API_KEY
+      + (pageToken ? '&pageToken=' + pageToken : '');
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var all = accumulated.concat(data.items || []);
+        if (data.nextPageToken) {
+          fetchPage(data.nextPageToken, all);
+        } else {
+          render(all);
+        }
+      })
+      .catch(function() {
+        list.innerHTML = '<p style="color:#555;font-size:0.56rem;letter-spacing:0.15em;padding:14px 0;">COULD NOT LOAD CATALOGUE</p>';
+      });
+  }
+
+  fetchPage(null, []);
+})();
+
   // Scale CDJ deck to fit container on mobile, centred
   function scaleDeck() {
     var win = document.getElementById('deck-window');
@@ -1558,5 +1804,6 @@ Garments should be thoroughly washed after processing and before wear.
   window.addEventListener('resize', scaleDeck);
 
 </script>
+<script src="assets/wip.js"></script>
 </body>
 </html>
