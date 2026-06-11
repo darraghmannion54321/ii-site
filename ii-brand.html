@@ -1896,8 +1896,7 @@ const products = {
   if (isMobile) {
     landing.style.background = 'transparent';
     fadeIn.style.display = 'none';
-    showUI();
-    vid.play().catch(function(){});
+    vid.play().catch(function(){ showUI(); });
   } else {
     // Desktop — autoplay via canplaythrough
     vid.addEventListener('canplaythrough', launchVideo, { once: true });
