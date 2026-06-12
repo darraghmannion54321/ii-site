@@ -15,6 +15,9 @@
   background: none;
   border-radius: inherit;
   cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .wip-strip {
@@ -84,18 +87,15 @@
 
 /* Centre badge */
 .wip-badge {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   z-index: 100;
   pointer-events: none;
   animation: wip-pulse 3.5s ease-in-out infinite;
 }
 
 @keyframes wip-pulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1);    }
-  50%       { transform: translate(-50%, -50%) scale(1.06); }
+  0%, 100% { transform: scale(1);    }
+  50%       { transform: scale(1.06); }
 }
 
 .wip-badge img {
