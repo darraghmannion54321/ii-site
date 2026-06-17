@@ -1088,7 +1088,7 @@
 
     /* header video zoomed on mobile - hide middle */
     .ii-header { height: 180px; overflow: hidden; }
-    .ii-header-video { width: 100%; height: 100%; object-fit: contain; transform: none; }
+    .ii-header-video { width: 100%; height: auto; min-height: 400%; object-fit: unset; transform: scale(2.5); transform-origin: top center; }
     .ii-header-highlight-canvas { height: 100%; }
 
     /* footer fix */
@@ -1206,7 +1206,7 @@
 
 
 
-<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline preload="auto"><source src="header-video.mp4" type="video/mp4"></video><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
+<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline webkit-playsinline preload="auto"><source src="header-video.mp4" type="video/mp4"></video><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
 <button class="ii-nav-smiley-btn" id="ii-nav-smiley-btn" aria-label="Open menu"><img id="ii-nav-smiley-img" src="assets/asset-9cb167bc.png" alt="SMiiLEY" draggable="false"></button>
 <div class="ii-logo-overlay"><a href="ii.html" style="display:block;text-align:center;"><img src="assets/asset-c16452b9.png" alt="" style="height:38px;width:auto;display:block;margin:0 auto;"></a></div></div>
 
