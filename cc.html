@@ -1138,16 +1138,24 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     min-width: 100%;
     z-index: 0;
     pointer-events: none;
     display: block;
     filter: brightness(0.4) saturate(0.7) hue-rotate(20deg);
-    object-fit: cover;
-    object-position: top;
+    object-fit: fill;
   }
-  .ii-header-video::-webkit-media-controls { display: none !important; }
+  .ii-header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: rgba(80, 200, 80, 0.25);
+    mix-blend-mode: overlay;
+  }
+    .ii-header-video::-webkit-media-controls { display: none !important; }
   .ii-header-video::-webkit-media-controls-enclosure { display: none !important; }
   .ii-header-video::-webkit-media-controls-overlay-play-button { display: none !important; }
   .ii-header-highlight-canvas {
