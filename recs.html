@@ -1669,5 +1669,16 @@ Garments should be thoroughly washed after processing and before wear.
 
 </script>
 <script src="assets/wip.js"></script>
+
+  // Mobile: swap to phone-optimised header video
+  (function() {
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      var hv = document.querySelector('.ii-header-video');
+      if (hv) {
+        hv.src = 'header-video-mobile.mp4';
+        hv.load();
+      }
+    }
+  })();
 </body>
 </html>
