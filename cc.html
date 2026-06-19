@@ -1133,19 +1133,7 @@
     overflow: hidden;
     border-bottom: 1px solid #1a5c2a;
   }
-  .ii-header-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    min-width: 100%;
-    z-index: 0;
-    pointer-events: none;
-    display: block;
-    filter: brightness(0.4) saturate(0.7) hue-rotate(20deg);
-    object-fit: fill;
-  }
+  .ii-header-video { width: 100%; height: 100%; object-fit: fill; transform: none; }
   .ii-header::after {
     content: '';
     position: absolute;
@@ -1814,16 +1802,5 @@ Garments should be thoroughly washed after processing and before wear.
 
 </script>
 <script src="assets/wip.js"></script>
-
-  // Mobile: swap to phone-optimised header video
-  (function() {
-    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-      var hv = document.querySelector('.ii-header-video');
-      if (hv) {
-        hv.src = 'header-video-mobile.mp4';
-        hv.load();
-      }
-    }
-  })();
 </body>
 </html>
