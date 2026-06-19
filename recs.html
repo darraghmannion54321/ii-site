@@ -963,7 +963,14 @@
     background: rgba(80, 200, 80, 0.25);
     mix-blend-mode: overlay;
   }
-    .ii-header-video::-webkit-media-controls { display: none !important; }
+    .ii-header-video-block {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: all;
+    background: transparent;
+  }
+  .ii-header-video::-webkit-media-controls { display: none !important; }
   .ii-header-video::-webkit-media-controls-enclosure { display: none !important; }
   .ii-header-video::-webkit-media-controls-overlay-play-button { display: none !important; }
   .ii-header-highlight-canvas {
@@ -1031,7 +1038,7 @@
 
 
 
-<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline webkit-playsinline preload="auto"><source src="header-video.mp4" type="video/mp4"></video><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
+<div class="ii-header"><video class="ii-header-video" autoplay muted loop playsinline webkit-playsinline preload="auto" disableRemotePlayback x-webkit-airplay="deny"><source src="header-video.mp4" type="video/mp4"></video><div class="ii-header-video-block"></div><canvas class="ii-header-highlight-canvas" id="header-highlight-canvas"></canvas><canvas id="ii-matrix-canvas" class="ii-matrix-canvas" style="display:none;"></canvas>
 <button class="ii-nav-smiley-btn" id="ii-nav-smiley-btn" aria-label="Open menu"><img id="ii-nav-smiley-img" src="assets/asset-9cb167bc.png" alt="SMiiLEY" draggable="false"></button>
 <div class="ii-logo-overlay"><a href="ii.html" style="display:block;text-align:center;"><img src="assets/asset-8996217c.png" alt="Eyes Set Recs" style="height:38px;width:auto;display:block;margin:0 auto;"></a></div></div>
 
