@@ -1248,22 +1248,27 @@ const trackLibrary = [];
 let activeTrackIdx = -1;
 let sourceGen = 0; // incremented each time a new source starts; onended guards stale callbacks
 
-// Auto-load tracks from /tracks/ folder on page load
+// ═══════════════════════════════════════════════════════════════════
+//  TRACK LIST — shown on the deck
+//  To HIDE a track: change its  show: true  to  show: false
+//  To SHOW it again: change it back to  show: true
+//  (Leave the file in the tracks/ folder either way.)
+// ═══════════════════════════════════════════════════════════════════
 const AUTO_TRACKS = [
-  'tracks/Darragh_ii - DOGS ABUSE.mp3',
-  'tracks/Darragh_ii - FAMiiSHED.mp3',
-  'tracks/Darragh_ii - GROUND HOG.mp3',
-  'tracks/Darragh_ii - SUNDAY SCARiiES.mp3',
-  'tracks/Darragh_ii - WiiTH EVERY HEARTBEAT.mp3',
-  'tracks/RISTO - ii Just Wanna Dance.mp3',
-  'tracks/RISTO - WAiiT For Me.mp3',
-  'tracks/RISTO - Only One.mp3',
-  'tracks/RISTO - Need You.mp3',
-  'tracks/Andrew Mccarthy - BRiiNG THE BEAT BACK.mp3',
+  { file: 'tracks/Darragh_ii - DOGS ABUSE.mp3',                 show: false },
+  { file: 'tracks/Darragh_ii - FAMiiSHED.mp3',                  show: false },
+  { file: 'tracks/Darragh_ii - GROUND HOG.mp3',                 show: false },
+  { file: 'tracks/Darragh_ii - SUNDAY SCARiiES.mp3',            show: false },
+  { file: 'tracks/Darragh_ii - WiiTH EVERY HEARTBEAT.mp3',      show: false },
+  { file: 'tracks/RISTO - ii Just Wanna Dance.mp3',             show: false },
+  { file: 'tracks/RISTO - WAiiT For Me.mp3',                    show: true },
+  { file: 'tracks/RISTO - Only One.mp3',                        show: true },
+  { file: 'tracks/RISTO - Need You.mp3',                        show: false },
+  { file: 'tracks/Andrew Mccarthy - BRiiNG THE BEAT BACK.mp3',  show: true },
 ];
 
 function autoLoadTracks() {
-  AUTO_TRACKS.forEach(path => {
+  AUTO_TRACKS.filter(t => t.show !== false).map(t => t.file).forEach(path => {
     const filename = path.split('/').pop();
     const raw = filename.replace(/\.[^.]+$/, '');
     const sep = raw.indexOf(' - ');
