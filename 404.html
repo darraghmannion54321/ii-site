@@ -8,15 +8,19 @@
 <link rel="apple-touch-icon" href="assets/asset-9cb167bc.png"/>
 <meta name="theme-color" content="#000000"/>
 <meta name="robots" content="noindex"/>
+<link rel="stylesheet" href="assets/wip.css">
 <style>
   * { box-sizing:border-box; margin:0; padding:0; }
   html, body { height:100%; }
   body {
     background:#000; color:#fff;
     font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    cursor:crosshair; overflow:hidden;
+  }
+  .page {
+    position:relative; width:100%; min-height:100vh;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    min-height:100vh; text-align:center; padding:32px; cursor:crosshair;
-    overflow:hidden;
+    text-align:center; padding:32px;
   }
   .logo { width:130px; height:auto; }
   .msg {
@@ -34,9 +38,13 @@
 </style>
 </head>
 <body>
-  <img class="logo" src="assets/asset-9cb167bc.png" alt="ii"/>
-  <div class="msg">Error</div>
-  <a class="home" href="/ii.html">← Back to <span class="ii">ii</span></a>
+  <div class="page wip-wrap">
+    <div class="wip"></div>
+    <img class="logo" src="assets/asset-9cb167bc.png" alt="ii"/>
+    <div class="msg">Error</div>
+    <a class="home" href="/ii.html">← Back to <span class="ii">ii</span></a>
+  </div>
+<script src="assets/wip.js"></script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
