@@ -1318,8 +1318,21 @@ function renderTrackList(query) {
       </div>
       <div class="track-item-dur">${t.duration != null ? formatTime(t.duration) : '--:--'}</div>`;
     div.addEventListener('click', () => selectTrack(trackLibrary.indexOf(t)));
+    div.addEventListener('mouseenter', () => prefetchTrack(t));  // warm the download on hover
     list.appendChild(div);
   });
+}
+
+// Download a track's audio in the background (on hover) so clicking it loads faster.
+// Stores the compressed bytes (~7MB) only — decoding still happens on select to avoid
+// holding many large decoded buffers in memory.
+function prefetchTrack(t) {
+  if (!t || t.buffer || t.arrayBuf || t._prefetching || !t.path) return;
+  t._prefetching = true;
+  fetch(t.path)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    .then(ab => { t.arrayBuf = ab; t._prefetching = false; })
+    .catch(() => { t._prefetching = false; });
 }
 function selectTrack(idx) {
   // Ignore repeat clicks on a track that's already loading (prevents stacked fetches)
@@ -1349,14 +1362,20 @@ function selectTrack(idx) {
     updatePills();
     onTrackReady(t);
   } else if (t.arrayBuf) {
-    // ArrayBuffer in memory — decode now
-    setTrackStatus('DECODING...');
+    // Prefetched bytes in memory — show track now, decode in the background
+    state.trackLoaded = false;
+    state.trackLoading = true;
+    state.duration = 0; state.pauseOffset = 0; state.cuePoint = 0;
+    onTrackReady(t);
+    updatePills();
     state.audioCtx.decodeAudioData(t.arrayBuf.slice(0), (buffer) => {
+      if (activeTrackIdx !== idx) return;
       t.buffer = buffer; t.duration = buffer.duration; t.arrayBuf = null;
       state.audioBuffer = buffer; state.duration = buffer.duration;
-      state.trackLoaded = true; state.pauseOffset = 0; state.cuePoint = 0;
-      updatePills(); setTrackStatus(''); onTrackReady(t);
-    }, err => { console.error('[CDJ] decode failed', t.djName, err); setTrackStatus('DECODE ERROR'); });
+      state.trackLoaded = true; state.trackLoading = false;
+      computeWaveformPeaks(buffer); drawScreen(); updatePills();
+      if (state._pendingPlay) { state._pendingPlay = false; startSource(0); }
+    }, err => { state.trackLoading = false; console.error('[CDJ] decode failed', t.djName, err); setTrackStatus('DECODE ERROR'); });
   } else if (t.path || t.file) {
     // Show the track on screen IMMEDIATELY (title + artwork); audio loads in the background
     state.trackLoaded = false;
