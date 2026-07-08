@@ -2,3 +2,6 @@
 .netlify/
 .claude/
 tracks-original/
+
+# unused master/source files — keep local, never deploy
+*-MASTER.html
