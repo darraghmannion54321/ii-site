@@ -429,7 +429,8 @@ function drawScreen() {
   ctx.globalAlpha = trackFadeAlpha;
 
   const loaded = state.trackLoaded;
-  const t = loaded && activeTrackIdx >= 0 ? trackLibrary[activeTrackIdx] : null;
+  // Show the selected track's title/artwork immediately, even while its audio is still loading
+  const t = activeTrackIdx >= 0 ? trackLibrary[activeTrackIdx] : null;
 
   // ── TOP HEADING ──
   ctx.fillStyle = '#000000';
@@ -466,6 +467,15 @@ function drawScreen() {
     // Fixed left-edge playhead line
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(wz.x, wz.y, 2, wz.h);
+  } else if (t && !loaded) {
+    // Audio still loading — show an indicator where the waveform will appear
+    const lz = z.waveform;
+    ctx.fillStyle = '#44932f';
+    ctx.font = 'bold 13px monospace';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText('LOADING…', lz.x + lz.w / 2, lz.y + lz.h / 2);
+    ctx.textAlign = 'left';
   }
   // underline — always fully visible regardless of fade
   ctx.globalAlpha = 1;
@@ -1312,6 +1322,8 @@ function renderTrackList(query) {
   });
 }
 function selectTrack(idx) {
+  // Ignore repeat clicks on a track that's already loading (prevents stacked fetches)
+  if (idx === activeTrackIdx && state.trackLoading) { closeTrackPanel(); return; }
   activeTrackIdx = idx;
   const t = trackLibrary[idx];
   ensureAudioCtx();
@@ -1346,26 +1358,29 @@ function selectTrack(idx) {
       updatePills(); setTrackStatus(''); onTrackReady(t);
     }, err => { console.error('[CDJ] decode failed', t.djName, err); setTrackStatus('DECODE ERROR'); });
   } else if (t.path || t.file) {
-    // Lazy load on first select — fetch URL or read File
-    setTrackStatus('LOADING...');
+    // Show the track on screen IMMEDIATELY (title + artwork); audio loads in the background
+    state.trackLoaded = false;
+    state.trackLoading = true;
+    state.duration = 0; state.pauseOffset = 0; state.cuePoint = 0;
+    onTrackReady(t);          // draws title + artwork now; waveform is skipped until the buffer is ready
+    updatePills();
     const bufPromise = t.file
       ? new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = rej; r.readAsArrayBuffer(t.file); })
       : fetch(t.path).then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
     bufPromise
-      .then(arrayBuf => {
-        setTrackStatus('DECODING...');
-        // Safari decodeAudioData is callback-only — wrap for cross-browser compat
-        return new Promise((res, rej) => state.audioCtx.decodeAudioData(arrayBuf, res, rej));
-      })
+      // Safari decodeAudioData is callback-only — wrap for cross-browser compat
+      .then(arrayBuf => new Promise((res, rej) => state.audioCtx.decodeAudioData(arrayBuf, res, rej)))
       .then(buffer => {
+        if (activeTrackIdx !== idx) return;   // user selected a different track while this was loading
         t.buffer = buffer; t.duration = buffer.duration; t.file = null;
         state.audioBuffer = buffer; state.duration = buffer.duration;
-        state.trackLoaded = true; state.pauseOffset = 0; state.cuePoint = 0;
-        updatePills(); setTrackStatus(''); onTrackReady(t);
-        // Auto-play if user already pressed play while track was loading
+        state.trackLoaded = true; state.trackLoading = false;
+        computeWaveformPeaks(buffer); drawScreen();   // add waveform without re-fading title/artwork
+        updatePills();
+        // Auto-play if user already pressed play while the track was loading
         if (state._pendingPlay) { state._pendingPlay = false; startSource(0); }
       })
-      .catch(err => { console.error('[CDJ] load failed', t.path || (t.file && t.file.name), err); setTrackStatus('LOAD ERROR'); });
+      .catch(err => { console.error('[CDJ] load failed', t.path || (t.file && t.file.name), err); state.trackLoading = false; setTrackStatus('LOAD ERROR'); });
   }
 }
 
