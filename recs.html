@@ -1352,7 +1352,7 @@ Garments should be thoroughly washed after processing and before wear.
 (function(){
   var iframe = document.getElementById('deck-iframe');
   if (!iframe) return;
-  var BASE = 'https://eyessetrecs.netlify.app/cdj-player.html';
+  var BASE = 'cdj-player.html';  // reload the local deck (same origin), not a stale external copy
 
   function checkAndReload() {
     try {
